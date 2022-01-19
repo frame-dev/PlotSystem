@@ -1,0 +1,17 @@
+name: PlotSystem
+version: '${project.version}'
+main: ch.framedev.plotsystem.main.Main
+api-version: 1.17
+authors: [ FrameDev ]
+website: https://framedev.ch
+
+commands:
+  create:
+  pos1:
+  pos2:
+  plot:
+    aliases:
+      - p
+      - plots
+      - plotsystem
+  createplot:
