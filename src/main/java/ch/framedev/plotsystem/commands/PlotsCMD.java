@@ -47,6 +47,10 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
             if (arg0.equalsIgnoreCase("claim")) {
                 if (sender instanceof Player) {
                     Player player = (Player) sender;
+                    if(!player.hasPermission("plotsystem.plot.claim")) {
+                        player.sendMessage(plugin.getPrefix() + "§cNo Permissions!");
+                        return true;
+                    }
                     if (Plot.isPlayerInPlotStatic(player)) {
                         Plot plot = Plot.getPlot(player.getLocation());
                         if (plot == null) {
@@ -135,7 +139,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                 }
                 return true;
             }
-            if (arg0.equalsIgnoreCase("phome")) {
+            if (arg0.equalsIgnoreCase("home")) {
                 if (sender instanceof Player) {
                     Player player = (Player) sender;
                     if (!PlotManager.getInstance().getPlotHomes(player).isEmpty() && PlotManager.getInstance().getPlotHomes(player).size() > 0 && Plot.getPlot(PlotManager.getInstance().getPlotHomes(player).get(0)) == null) {
@@ -144,7 +148,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                     player.teleport(Plot.getPlot(PlotManager.getInstance().getPlotHomes(player).get(0)).getHome());
                 }
             }
-            if (arg0.equalsIgnoreCase("psethome")) {
+            if (arg0.equalsIgnoreCase("sethome")) {
                 if (sender instanceof Player) {
                     Player player = (Player) sender;
                     if (Plot.isPlayerInPlotStatic(player)) {
@@ -180,7 +184,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                     }
                 }
             }
-            if (args[0].equalsIgnoreCase("phome")) {
+            if (args[0].equalsIgnoreCase("home")) {
                 if (sender instanceof Player) {
                     Player player = (Player) sender;
                     try {
@@ -230,7 +234,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                 }
 
                 Player player = (Player) sender;
-                if (!player.hasPermission("plotsystem.plot.addmember")) {
+                if (!player.hasPermission("plotsystem.plot.removemember")) {
                     player.sendMessage(plugin.getPrefix() + "§cKeine Permissions!");
                     return true;
                 }
@@ -341,7 +345,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                 }
 
                 Player player = (Player) sender;
-                if (!player.hasPermission("plotsystem.plot.addmember")) {
+                if (!player.hasPermission("plotsystem.plot.ban")) {
                     player.sendMessage(plugin.getPrefix() + "§cKeine Permissions!");
                     return true;
                 }
@@ -387,6 +391,10 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
             if (args[0].equalsIgnoreCase("visit")) {
                 if (sender instanceof Player) {
                     Player player = (Player) sender;
+                    if (!player.hasPermission("plotsystem.plot.visit")) {
+                        player.sendMessage(plugin.getPrefix() + "§cKeine Permissions!");
+                        return true;
+                    }
                     OfflinePlayer offPlayer = Bukkit.getOfflinePlayer(args[1]);
                     try {
                         if (!PlotManager.getInstance().getPlotHomes(offPlayer).isEmpty() && PlotManager.getInstance().getPlotHomes(offPlayer).size() > 0 && Plot.getPlot(PlotManager.getInstance().getPlotHomes(offPlayer).get(Integer.parseInt(args[2]) - 1)) == null) {

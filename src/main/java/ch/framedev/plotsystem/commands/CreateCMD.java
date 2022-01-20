@@ -50,6 +50,10 @@ public class CreateCMD implements CommandExecutor, Listener {
         if (command.getName().equalsIgnoreCase("create")) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
+                if(!player.hasPermission("plotsystem.admin.create")) {
+                    player.sendMessage(Main.getInstance().getPrefix() + "§cNo Permissions!");
+                    return true;
+                }
                 if (!locations.isEmpty() && locations.containsKey(player)) {
                     try {
                         new PlotsSetup(new Cuboid(locations.get(player).get("1"), locations.get(player).get("2")))
@@ -65,6 +69,10 @@ public class CreateCMD implements CommandExecutor, Listener {
             }
         }
         if (command.getName().equalsIgnoreCase("createplot")) {
+            if(!sender.hasPermission("plotsystem.plot.createplot")) {
+                sender.sendMessage(Main.getInstance().getPrefix() + "§cNo Permissions!");
+                return true;
+            }
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 if (!Plot.isLocationInPlot(player.getLocation())) {
@@ -79,6 +87,10 @@ public class CreateCMD implements CommandExecutor, Listener {
         if(command.getName().equalsIgnoreCase("claim")) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
+                if(!player.hasPermission("plotsystem.plot.claim")) {
+                    player.sendMessage(Main.getInstance().getPrefix() + "§cNo Permissions!");
+                    return true;
+                }
                 if (!locations.isEmpty() && locations.containsKey(player)) {
                     Cuboid cuboid = new Cuboid(locations.get(player).get("1"), locations.get(player).get("2"));
                     ArrayList<Boolean> success = new ArrayList<>();
@@ -126,6 +138,10 @@ public class CreateCMD implements CommandExecutor, Listener {
         if(command.getName().equalsIgnoreCase("pmarker")) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
+                if(!player.hasPermission("plotsystem.plot.marker")) {
+                    player.sendMessage(Main.getInstance().getPrefix() + "§cNo Permissions!");
+                    return true;
+                }
                 ItemStack itemStack = new ItemStack(Material.STICK);
                 ItemMeta meta = itemStack.getItemMeta();
                 meta.setDisplayName("§aMarker");

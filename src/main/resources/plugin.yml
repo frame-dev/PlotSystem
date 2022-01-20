@@ -26,6 +26,18 @@ permissions:
       plotsystem.admin.pvp: true
       plotsystem.admin.interact: true
       plotsystem.admin.ignore: true
+      plotsystem.admin.create: true
+      plotsystem.admin.createplot: true
+      plotsystem.plot.marker: true
+      plotsystem.plot.claim: true
+      plotsystem.plot.visit: true
+      plotsystem.plot.ban: true
+      plotsystem.plot.flag: true
+      plotsystem.plot.removeowner: true
+      plotsystem.plot.setowner: true
+      plotsystem.plot.removemember: true
+      plotsystem.plot.addmember: true
+      plotsystem.plot.info: true
   plotsystem.admin.break:
     default: op
   plotsystem.admin.place:
@@ -35,4 +47,28 @@ permissions:
   plotsystem.admin.interact:
     default: op
   plotsystem.admin.ignore:
+    default: op
+  plotsystem.admin.create:
+    default: op
+  plotsystem.admin.createplot:
+    default: op
+  plotsystem.plot.marker:
+    default: op
+  plotsystem.plot.claim:
+    default: op
+  plotsystem.plot.visit:
+    default: op
+  plotsystem.plot.ban:
+    default: op
+  plotsystem.plot.flag:
+    default: op
+  plotsystem.removeowner:
+    default: op
+  plotsystem.plot.setowner:
+    default: op
+  plotsystem.plot.removemember:
+    default: op
+  plotsystem.plot.addmember:
+    default: op
+  plotsystem.plot.info:
     default: op
