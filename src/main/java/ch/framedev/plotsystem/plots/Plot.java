@@ -319,7 +319,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
     public Location getHome() {
         if (home == null) {
             if (cuboid.getCenter().getWorld() == null) return null;
-            return cuboid.getCenter().getWorld().getSpawnLocation();
+            return null;
         } else {
             return locationFromString(home);
         }

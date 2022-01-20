@@ -11,6 +11,7 @@ import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
@@ -277,10 +278,6 @@ public class PlotListeners implements Listener {
                             event.getPlayer().sendMessage("/phome");
                         }
                     }
-                if (plot.hasFlag(Flag.FARM_PROTECT)) {
-                    if (event.getPlayer().getLocation().subtract(0, -0.5, 0).getBlock().getType() == Material.FARMLAND)
-                        event.getPlayer().getLocation().subtract(0, -0.5, 0).getBlock().setType(Material.FARMLAND);
-                }
             } else {
                 event.setCancelled(false);
             }
@@ -303,6 +300,16 @@ public class PlotListeners implements Listener {
                             if (!event.getPlayer().hasPermission("plotsystem.admin.ignorechat"))
                                 event.setCancelled(true);
                     }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onBlockFade(BlockFadeEvent event) {
+        if (event.getBlock().getType() == Material.FARMLAND) {
+            if (Plot.isLocationInPlot(event.getBlock().getLocation())) {
+                if (Plot.getPlot(event.getBlock().getLocation()) != null && Plot.getPlot(event.getBlock().getLocation()).hasFlag(Flag.FARM_PROTECT))
+                    event.setCancelled(true);
             }
         }
     }

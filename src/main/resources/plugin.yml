@@ -15,3 +15,24 @@ commands:
       - plots
       - plotsystem
   createplot:
+  claim:
+  pmarker:
+
+permissions:
+  plotsystem.*:
+    children:
+      plotsystem.admin.break: true
+      plotsystem.admin.place: true
+      plotsystem.admin.pvp: true
+      plotsystem.admin.interact: true
+      plotsystem.admin.ignore: true
+  plotsystem.admin.break:
+    default: op
+  plotsystem.admin.place:
+    default: op
+  plotsystem.admin.pvp:
+    default: op
+  plotsystem.admin.interact:
+    default: op
+  plotsystem.admin.ignore:
+    default: op
