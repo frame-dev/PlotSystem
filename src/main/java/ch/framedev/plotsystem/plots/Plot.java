@@ -98,6 +98,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
         this.price = plot.price;
     }
 
+    @SuppressWarnings("unchecked")
     public Plot(Map<String, Object> map) {
         this.id = (int) map.get("id");
         if (map.get("owner") == null) {
@@ -363,6 +364,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
                 '}';
     }
 
+    @SuppressWarnings("unchecked")
     public void createPlot() {
         File fileCfg = new File(Main.getInstance().getDataFolder(), "plots.yml");
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(fileCfg);
@@ -409,6 +411,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     public static List<Plot> getPlots() {
         File fileCfg = new File(Main.getInstance().getDataFolder(), "plots.yml");
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(fileCfg);

@@ -32,7 +32,8 @@ public class OwnerCMD implements CommandExecutor {
     public OwnerCMD(Main plugin) {
         this.plugin = plugin;
     }
-
+    
+    @SuppressWarnings("deprecation")
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (command.getName().equalsIgnoreCase("claim")) {

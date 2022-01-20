@@ -39,6 +39,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
         plugin.getCommand("plot").setExecutor(this);
     }
 
+    @SuppressWarnings("deprecation")
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 1) {

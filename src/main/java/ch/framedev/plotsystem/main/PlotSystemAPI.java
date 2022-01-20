@@ -17,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 public class PlotSystemAPI {
 
     private static PlotSystemAPI instance;
+    @SuppressWarnings("unused")
     private final Main plugin;
 
     protected PlotSystemAPI() {

@@ -24,11 +24,9 @@ import java.util.HashMap;
 
 public class CreateCMD implements CommandExecutor, Listener {
 
-    private final Main plugin;
     private HashMap<Player, HashMap<String, Location>> locations;
 
     public CreateCMD(Main plugin) {
-        this.plugin = plugin;
         this.locations = new HashMap<>();
         plugin.getCommand("create").setExecutor(this);
         plugin.getCommand("pos1").setExecutor(this);
@@ -43,7 +41,8 @@ public class CreateCMD implements CommandExecutor, Listener {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 if (!locations.isEmpty() && locations.containsKey(player)) {
-                    new PlotsSetup(new Cuboid(locations.get(player).get("1"), locations.get(player).get("2"))).create(Plot.getHighestId()+1);
+                    new PlotsSetup(new Cuboid(locations.get(player).get("1"), locations.get(player).get("2")))
+                            .create(Plot.getHighestId() + 1);
                     player.sendMessage("§aPlots Created!");
                 } else {
                     player.sendMessage("§cNo Positions Set!");
@@ -55,7 +54,7 @@ public class CreateCMD implements CommandExecutor, Listener {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 if (!Plot.isLocationInPlot(player.getLocation()))
-                    new Plot(Plot.getHighestId()+1, player.getLocation().getChunk()).createPlot();
+                    new Plot(Plot.getHighestId() + 1, player.getLocation().getChunk()).createPlot();
             }
         }
         if (command.getName().equalsIgnoreCase("pos1")) {
