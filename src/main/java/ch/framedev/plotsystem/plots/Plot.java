@@ -479,6 +479,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
             if (this.members != p.members) return false;
             if (!Objects.equals(this.home, p.home)) return false;
             if (this.bannedPlayers != p.bannedPlayers) return false;
+            if (this.price != p.price) return false;
             return this.flags == p.flags;
         } else {
             return false;
