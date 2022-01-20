@@ -1,3 +1,5 @@
 DefaultFlags:
   - REDSTONE
+  - FALL_DAMAGE
+  - MOB_DAMAGE
 PlotWorld: world

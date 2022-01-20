@@ -14,6 +14,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFadeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -139,16 +140,39 @@ public class PlotListeners implements Listener {
                     Plot plot = Plot.getPlot(event.getDamager().getLocation());
                     if (plot == null) return;
                     if (plot.hasOwner()) {
-                        if (!plot.hasFlag(Flag.PVP))
+                        if (!plot.hasFlag(Flag.PVP)) {
                             if (!event.getEntity().hasPermission("plotsystem.admin.pvp"))
                                 event.setCancelled(true);
+                        }
                     } else {
-                        if (!event.getEntity().hasPermission("plotsystem.admin.pvp"))
+                        if (!event.getEntity().hasPermission("plotsystem.admin.pvp")) {
                             event.setCancelled(true);
+                        }
                     }
                 }
             }
         }
+    }
+
+    @EventHandler
+    public void onEntityDamageCause(EntityDamageEvent event) {
+        if (event.getEntity() instanceof Player)
+            if (Plot.isPlayerInPlotStatic((Player) event.getEntity())) {
+                Plot plot = Plot.getPlot(event.getEntity().getLocation());
+                if (plot == null) return;
+                if (plot.hasOwner()) {
+                    if (!plot.hasFlag(Flag.FALL_DAMAGE)) {
+                        if (event.getCause() == EntityDamageEvent.DamageCause.FALL)
+                            event.setCancelled(true);
+                    } else if(!plot.hasFlag(Flag.MOB_DAMAGE))
+                        if(event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK)
+                            event.setCancelled(true);
+                } else {
+                    if (!event.getEntity().hasPermission("plotsystem.admin.ignore")) {
+                        event.setCancelled(true);
+                    }
+                }
+            }
     }
 
     /**

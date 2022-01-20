@@ -19,6 +19,8 @@ public enum Flag {
     DENY_CHAT("DENY_CHAT"),
     MONSTERS("MONSTERS"),
     ANIMALS("ANIMALS"),
+    FALL_DAMAGE("FALL_DAMAGE"),
+    MOB_DAMAGE("MOB_DAMAGE"),
     FARM_PROTECT("FARM_PROTECT");
 
     private final String type;

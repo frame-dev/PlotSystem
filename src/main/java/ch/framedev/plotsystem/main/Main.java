@@ -52,6 +52,7 @@ public final class Main extends JavaPlugin {
         }.runTaskLater(this, 4*20);
 
         new PlotSystemAPI();
+        Bukkit.getConsoleSender().sendMessage("§aPlotSystem §c» §6API Enabled!");
 
         Bukkit.getConsoleSender().sendMessage("§cPlotSystem is work in progress!");
     }

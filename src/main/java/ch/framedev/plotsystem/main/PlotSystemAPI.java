@@ -5,6 +5,9 @@ import ch.framedev.plotsystem.plots.Plot;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
+import java.util.UUID;
+
 /**
  * / This Plugin was Created by FrameDev
  * / Package : ch.framedev.plotsystem.main
@@ -47,5 +50,17 @@ public class PlotSystemAPI {
 
     public Flag getFlag(String flag) {
         return Flag.getFlag(flag.toUpperCase());
+    }
+
+    public List<UUID> getMembers(Plot plot) {
+        return plot.getMembers();
+    }
+
+    public List<UUID> getOwners(Plot plot) {
+        return plot.getOwners();
+    }
+
+    public UUID getOwner(Plot plot) {
+        return plot.getOwner();
     }
 }
