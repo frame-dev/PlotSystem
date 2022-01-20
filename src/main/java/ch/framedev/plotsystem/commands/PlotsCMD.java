@@ -219,7 +219,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
 
                 plot.addMember(Bukkit.getOfflinePlayer(args[1]).getUniqueId());
                 plot.createPlot();
-                player.sendMessage("§aMember wurde hinzugefügt §6" + Bukkit.getOfflinePlayer(args[0]).getName());
+                player.sendMessage("§aMember wurde hinzugefügt §6" + Bukkit.getOfflinePlayer(args[1]).getName());
                 return true;
             }
             if (args[0].equalsIgnoreCase("removemember")) {
@@ -247,7 +247,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
 
                 plot.removeMember(Bukkit.getOfflinePlayer(args[1]).getUniqueId());
                 plot.createPlot();
-                player.sendMessage("§cMember wurde entfernt §6" + Bukkit.getOfflinePlayer(args[0]).getName());
+                player.sendMessage("§cMember wurde entfernt §6" + Bukkit.getOfflinePlayer(args[1]).getName());
                 return true;
             }
             if (args[0].equalsIgnoreCase("setowner")) {
@@ -303,7 +303,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                 }
 
                 Player player = (Player) sender;
-                if (!player.hasPermission("plotsystem.plot.addmember")) {
+                if (!player.hasPermission("plotsystem.plot.flag")) {
                     player.sendMessage(plugin.getPrefix() + "§cKeine Permissions!");
                     return true;
                 }
