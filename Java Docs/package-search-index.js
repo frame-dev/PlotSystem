@@ -1,0 +1,1 @@
+packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"ch.framedev.plotsystem.commands"},{"l":"ch.framedev.plotsystem.listeners"},{"l":"ch.framedev.plotsystem.main"},{"l":"ch.framedev.plotsystem.plots"},{"l":"ch.framedev.plotsystem.utils"}]
