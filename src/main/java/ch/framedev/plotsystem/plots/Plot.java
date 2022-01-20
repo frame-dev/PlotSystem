@@ -312,7 +312,6 @@ public class Plot implements Serializable, ConfigurationSerializable {
 
     /**
      * Return Plot Home
-     * Work in progress
      *
      * @return return Plot Home Location
      */

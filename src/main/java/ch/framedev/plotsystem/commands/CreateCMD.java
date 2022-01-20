@@ -51,8 +51,12 @@ public class CreateCMD implements CommandExecutor, Listener {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 if (!locations.isEmpty() && locations.containsKey(player)) {
-                    new PlotsSetup(new Cuboid(locations.get(player).get("1"), locations.get(player).get("2")))
-                            .create(Plot.getHighestId() + 1);
+                    try {
+                        new PlotsSetup(new Cuboid(locations.get(player).get("1"), locations.get(player).get("2")))
+                                .create(Plot.getHighestId() + 1);
+                    } catch (Exception e) {
+                        player.sendMessage(Main.getInstance().getPrefix() + " §cPositions not set!");
+                    }
                     player.sendMessage("§aPlots Created!");
                 } else {
                     player.sendMessage("§cNo Positions Set!");

@@ -13,7 +13,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,9 +51,9 @@ public final class Main extends JavaPlugin {
         }.runTaskLater(this, 4*20);
 
         new PlotSystemAPI();
-        Bukkit.getConsoleSender().sendMessage("§aPlotSystem §c» §6API Enabled!");
+        Bukkit.getConsoleSender().sendMessage(getPrefix() + "§6API Enabled!");
 
-        Bukkit.getConsoleSender().sendMessage("§cPlotSystem is work in progress!");
+        Bukkit.getConsoleSender().sendMessage(getPrefix() + "§cis work in progress!");
     }
 
     @Override
@@ -82,7 +81,8 @@ public final class Main extends JavaPlugin {
         return instance;
     }
 
-    public List<String> listDir(String dir) throws IOException {
+    @SuppressWarnings("unused")
+    public List<String> listDir(String dir) {
         List<String> ret = new ArrayList<>();
         File[] contents = new File(dir).listFiles();
         if (contents != null) {

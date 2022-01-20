@@ -128,6 +128,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                         flags.add(flag.getType());
                     }
                     player.sendMessage("§aFlags : §6" + flags);
+                    player.sendMessage("§aAverage Light Level : §6" + plot.getCuboid().getAverageLightLevel());
                     player.sendMessage("§aPrice : §6" + plot.getPrice());
                 } else {
                     player.sendMessage("§cNo Plot found");

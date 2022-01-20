@@ -35,7 +35,8 @@ public class PlotsSetup {
      *
      * @param startId Start Plot ID, increases every new Plot
      */
-    public void create(int startId) {
+    public void create(int startId) throws Exception {
+        if(cuboid == null) throw new Exception("Cuboid is Null");
         int id = startId;
         List<Plot> plots = new ArrayList<>();
         for (Chunk chunk : cuboid.getChunks()) {
