@@ -2,6 +2,7 @@ package ch.framedev.plotsystem.main;
 
 import ch.framedev.plotsystem.plots.Flag;
 import ch.framedev.plotsystem.plots.Plot;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -62,5 +63,17 @@ public class PlotSystemAPI {
 
     public UUID getOwner(Plot plot) {
         return plot.getOwner();
+    }
+
+    public @Nullable Location getPlotHome(Plot plot) {
+        return plot.getHome();
+    }
+
+    public void addFlag(Plot plot, Flag... flags) {
+        plot.addFlag(flags);
+    }
+
+    public void removeFlag(Plot plot, Flag... flags) {
+        plot.removeFlag(flags);
     }
 }

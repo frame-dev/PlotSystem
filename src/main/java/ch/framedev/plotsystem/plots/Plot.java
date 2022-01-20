@@ -208,8 +208,18 @@ public class Plot implements Serializable, ConfigurationSerializable {
         if (!this.flags.contains(flag)) this.flags.add(flag);
     }
 
+    public void addFlag(Flag... flags) {
+        for (Flag flag : flags) {
+            if (!this.flags.contains(flag)) this.flags.add(flag);
+        }
+    }
+
     public void removeFlag(Flag flag) {
         flags.remove(flag);
+    }
+
+    public void removeFlag(Flag... flags) {
+        this.flags.removeAll(Arrays.asList(flags));
     }
 
     public boolean hasFlag(Flag flag) {
@@ -283,7 +293,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
         return builder.toString();
     }
 
-    private Location locationFromString(String text) {
+    public Location locationFromString(String text) {
         String[] s = text.split(";");
         World world = Bukkit.getWorld(s[0]);
         int x = Integer.parseInt(s[1]);

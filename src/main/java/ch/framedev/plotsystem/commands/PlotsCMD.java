@@ -47,7 +47,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
             if (arg0.equalsIgnoreCase("claim")) {
                 if (sender instanceof Player) {
                     Player player = (Player) sender;
-                    if(!player.hasPermission("plotsystem.plot.claim")) {
+                    if (!player.hasPermission("plotsystem.plot.claim")) {
                         player.sendMessage(plugin.getPrefix() + "§cNo Permissions!");
                         return true;
                     }
@@ -74,7 +74,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                         return true;
                     }
                     if (plot.isBuyable()) {
-                        if(plot.buyPlot(player)) {
+                        if (plot.buyPlot(player)) {
                             player.sendMessage(plugin.getPrefix() + "§aDir gehört nun dieses Plot!");
                         } else {
                             player.sendMessage(plugin.getPrefix() + "§cFehler beim Kaufen dieses Plots!");
@@ -165,17 +165,17 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                 }
             }
         } else if (args.length == 2) {
-            if(args[0].equalsIgnoreCase("setprice")) {
+            if (args[0].equalsIgnoreCase("setprice")) {
                 double price = Double.parseDouble(args[1]);
                 if (sender instanceof Player) {
                     Player player = (Player) sender;
-                    if(Plot.isPlayerInPlotStatic(player)) {
+                    if (Plot.isPlayerInPlotStatic(player)) {
                         Plot plot = Plot.getPlot(player.getLocation());
                         if (plot == null) {
                             player.sendMessage(plugin.getPrefix() + "§cPlot is null!");
                             return true;
                         }
-                        if(plot.isOwner(player)) {
+                        if (plot.isOwner(player)) {
                             plot.setPrice(price);
                             player.sendMessage(plugin.getPrefix() + "§aDu hast denn Preis auf §6" + price + " §agesetzt!");
                             plot.createPlot();
@@ -412,6 +412,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
         return false;
     }
 
+    @SuppressWarnings("deprecation")
     @Nullable
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
@@ -423,6 +424,19 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                 }
                 List<String> empty = new ArrayList<>();
                 for (String s : flags) {
+                    if (s.toLowerCase().startsWith(args[2].toLowerCase()))
+                        empty.add(s);
+                }
+                Collections.sort(empty);
+                return empty;
+            } else if (args[0].equalsIgnoreCase("visit")) {
+                List<String> homes = new ArrayList<>();
+                List<String> empty = new ArrayList<>();
+                if (sender instanceof Player)
+                    for (int homeInts : PlotManager.getInstance().getPlotHomes(Bukkit.getOfflinePlayer(args[1]))) {
+                        homes.add(homeInts + "");
+                    }
+                for (String s : homes) {
                     if (s.toLowerCase().startsWith(args[2].toLowerCase()))
                         empty.add(s);
                 }
@@ -457,9 +471,9 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
             List<String> commands = new ArrayList<>();
             commands.add("claim");
             commands.add("addmember");
-            commands.add("phome");
+            commands.add("home");
             commands.add("buy");
-            commands.add("psethome");
+            commands.add("sethome");
             commands.add("setowner");
             commands.add("banplayer");
             commands.add("flag");
