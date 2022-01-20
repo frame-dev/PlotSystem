@@ -278,8 +278,8 @@ public class PlotListeners implements Listener {
                         }
                     }
                 if (plot.hasFlag(Flag.FARM_PROTECT)) {
-                    if (event.getPlayer().getLocation().subtract(0, -1, 0).getBlock().getType() == Material.FARMLAND)
-                        event.getPlayer().getLocation().subtract(0, -1, 0).getBlock().setType(Material.FARMLAND);
+                    if (event.getPlayer().getLocation().subtract(0, -0.5, 0).getBlock().getType() == Material.FARMLAND)
+                        event.getPlayer().getLocation().subtract(0, -0.5, 0).getBlock().setType(Material.FARMLAND);
                 }
             } else {
                 event.setCancelled(false);
