@@ -6,6 +6,7 @@ import ch.framedev.plotsystem.listeners.PlotListeners;
 import ch.framedev.plotsystem.plots.Plot;
 import ch.framedev.plotsystem.plots.PlotManager;
 import ch.framedev.plotsystem.utils.Cuboid;
+import ch.framedev.plotsystem.utils.DatabaseManager;
 import ch.framedev.plotsystem.utils.VaultManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
@@ -22,6 +23,9 @@ public final class Main extends JavaPlugin {
     private List<Plot> plots;
     private List<String> defaultFlags;
     private VaultManager vaultManager;
+    private boolean mysql;
+    private boolean sql;
+    private DatabaseManager databaseManager;
 
     @Override
     public void onEnable() {
@@ -46,6 +50,11 @@ public final class Main extends JavaPlugin {
             public void run() {
                 if(getServer().getPluginManager().getPlugin("Vault") != null) {
                     vaultManager = new VaultManager();
+                }
+                if(getServer().getPluginManager().getPlugin("MySQLAPI") != null) {
+                    databaseManager = new DatabaseManager(instance);
+                    sql = databaseManager.isSql();
+                    mysql = databaseManager.isMysql();
                 }
             }
         }.runTaskLater(this, 4*20);
@@ -95,5 +104,17 @@ public final class Main extends JavaPlugin {
 
     public String getPrefix() {
         return "§6[§bPlot§System§6] §c» §7";
+    }
+
+    public DatabaseManager getDatabaseManager() {
+        return databaseManager;
+    }
+
+    public boolean isSql() {
+        return sql;
+    }
+
+    public boolean isMysql() {
+        return mysql;
     }
 }

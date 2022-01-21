@@ -21,6 +21,7 @@ public enum Flag {
     ANIMALS("ANIMALS"),
     FALL_DAMAGE("FALL_DAMAGE"),
     MOB_DAMAGE("MOB_DAMAGE"),
+    SELL("SELL"),
     FARM_PROTECT("FARM_PROTECT");
 
     private final String type;

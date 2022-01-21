@@ -269,6 +269,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
 
     public void setPrice(double price) {
         this.price = price;
+        addFlag(Flag.SELL);
     }
 
     public double getPrice() {
@@ -339,15 +340,18 @@ public class Plot implements Serializable, ConfigurationSerializable {
             if (Main.getInstance().getVaultManager() != null) {
                 if (owner != null) {
                     if (Main.getInstance().getVaultManager().getEconomy().has(newOwner, price)) {
-                        Main.getInstance().getVaultManager().getEconomy().withdrawPlayer(newOwner, price);
-                        Main.getInstance().getVaultManager().getEconomy().depositPlayer(Bukkit.getOfflinePlayer(owner), price);
-                        owner = null;
-                        owners.clear();
-                        members.clear();
-                        setPrice(0);
-                        setOwner(newOwner.getUniqueId());
-                        createPlot();
-                        return true;
+                        if(hasFlag(Flag.SELL)) {
+                            Main.getInstance().getVaultManager().getEconomy().withdrawPlayer(newOwner, price);
+                            Main.getInstance().getVaultManager().getEconomy().depositPlayer(Bukkit.getOfflinePlayer(owner), price);
+                            owner = null;
+                            owners.clear();
+                            members.clear();
+                            setPrice(0);
+                            setOwner(newOwner.getUniqueId());
+                            removeFlag(getFlags().toArray(new Flag[0]));
+                            createPlot();
+                            return true;
+                        }
                     }
                 }
             }
@@ -356,7 +360,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
     }
 
     public boolean isBuyable() {
-        return price != 0;
+        return price != 0 && hasFlag(Flag.SELL);
     }
 
     @Override
