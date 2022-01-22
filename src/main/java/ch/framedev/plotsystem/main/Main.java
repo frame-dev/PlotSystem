@@ -2,6 +2,7 @@ package ch.framedev.plotsystem.main;
 
 import ch.framedev.plotsystem.commands.CreateCMD;
 import ch.framedev.plotsystem.commands.PlotsCMD;
+import ch.framedev.plotsystem.listeners.PlayerListeners;
 import ch.framedev.plotsystem.listeners.PlotListeners;
 import ch.framedev.plotsystem.plots.Plot;
 import ch.framedev.plotsystem.plots.PlotManager;
@@ -10,11 +11,13 @@ import ch.framedev.plotsystem.utils.DatabaseManager;
 import ch.framedev.plotsystem.utils.VaultManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public final class Main extends JavaPlugin {
@@ -26,6 +29,9 @@ public final class Main extends JavaPlugin {
     private boolean mysql;
     private boolean sql;
     private DatabaseManager databaseManager;
+    private boolean limitedClaim;
+    private long limitedAmount;
+    private HashMap<Player, Long> limitedHashMap;
 
     @Override
     public void onEnable() {
@@ -34,9 +40,14 @@ public final class Main extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
 
+        this.limitedClaim = getConfig().getBoolean("MaxBlockClaim.Limited");
+        this.limitedAmount = getConfig().getLong("MaxBlockClaim.Amount");
+        this.limitedHashMap = new HashMap<>();
+
         new CreateCMD(this);
         new PlotsCMD(this);
         new PlotListeners(this);
+        new PlayerListeners(this);
         new PlotManager();
         ConfigurationSerialization.registerClass(Plot.class);
         ConfigurationSerialization.registerClass(Cuboid.class);
@@ -67,7 +78,6 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-
     }
 
     public List<String> getDefaultFlags() {
@@ -103,7 +113,7 @@ public final class Main extends JavaPlugin {
     }
 
     public String getPrefix() {
-        return "§6[§bPlot§System§6] §c» §7";
+        return "§6[§bPlot§aSystem§6] §c» §7";
     }
 
     public DatabaseManager getDatabaseManager() {
@@ -116,5 +126,17 @@ public final class Main extends JavaPlugin {
 
     public boolean isMysql() {
         return mysql;
+    }
+
+    public boolean isLimitedClaim() {
+        return limitedClaim;
+    }
+
+    public long getLimitedAmount() {
+        return limitedAmount;
+    }
+
+    public HashMap<Player, Long> getLimitedHashMap() {
+        return limitedHashMap;
     }
 }
