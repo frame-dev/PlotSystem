@@ -38,6 +38,7 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        // Singleton Init
         instance = this;
 
         getConfig().options().copyDefaults(true);
@@ -52,9 +53,14 @@ public final class Main extends JavaPlugin {
         new PlotListeners(this);
         new PlayerListeners(this);
         new PlotManager();
+
+        // Serialization Enable
         ConfigurationSerialization.registerClass(Plot.class);
         ConfigurationSerialization.registerClass(Cuboid.class);
+
         this.plots = new ArrayList<>();
+
+        // Default Flags
         this.defaultFlags = new ArrayList<>();
         if (getConfig().contains("DefaultFlags"))
             this.defaultFlags = getConfig().getStringList("DefaultFlags");
@@ -73,11 +79,13 @@ public final class Main extends JavaPlugin {
             }
         }.runTaskLater(this, 4 * 20);
 
+        // API
         new PlotSystemAPI();
         Bukkit.getConsoleSender().sendMessage(getPrefix() + "§6API Enabled!");
 
         Bukkit.getConsoleSender().sendMessage(getPrefix() + "§cis work in progress!");
 
+        // Permissions
         writePermissionsFile();
         Bukkit.getConsoleSender().sendMessage(getPrefix() + "§aYou find the Permissions in §6plugins/PlotSystem/permissions.txt §4§l!");
     }

@@ -21,7 +21,6 @@ import java.util.UUID;
 public class PlotSystemAPI {
 
     private static PlotSystemAPI instance;
-    @SuppressWarnings("unused")
     private final Main plugin;
 
     protected PlotSystemAPI() {
@@ -35,6 +34,24 @@ public class PlotSystemAPI {
 
     public static PlotSystemAPI getAPI() {
         return instance;
+    }
+
+    public List<String> getDefaultFlags() {
+        return plugin.getDefaultFlags();
+    }
+
+    public boolean isLimitedClaim() {
+        return plugin.isLimitedClaim();
+    }
+
+    public long getLimitedBlocksDefault() {
+        return plugin.getLimitedAmount();
+    }
+
+    public long getAvailableBlocksForPlayer(Player player) {
+        if (plugin.getLimitedHashMap().isEmpty()) return 0;
+        if (!plugin.getLimitedHashMap().containsKey(player)) return 0;
+        return plugin.getLimitedHashMap().get(player);
     }
 
     public @Nullable Plot getPlotById(int id) {
