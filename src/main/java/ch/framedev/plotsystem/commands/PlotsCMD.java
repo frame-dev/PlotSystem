@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.UUID;
 
 /**
+ * Plot Commands
  * / This Plugin was Created by FrameDev
  * / Package : ch.framedev.plotsystem
  * / ClassName PlotsCMD
@@ -37,6 +38,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
     public PlotsCMD(Main plugin) {
         this.plugin = plugin;
         plugin.getCommand("plot").setExecutor(this);
+        plugin.getServer().getConsoleSender().sendMessage(plugin.getPrefix() + "§aPlots Commands Registered!");
     }
 
     @SuppressWarnings("deprecation")
@@ -54,14 +56,14 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                     if (Plot.isPlayerInPlotStatic(player)) {
                         Plot plot = Plot.getPlot(player.getLocation());
                         if (plot == null) {
-                            player.sendMessage("§cDu stehst nicht in einem Plot!");
+                            player.sendMessage(plugin.getPrefix() + "§cDu stehst nicht in einem Plot!");
                             return true;
                         }
                         plot.setOwner(player.getUniqueId());
-                        player.sendMessage("§aClaimed!");
+                        player.sendMessage(plugin.getPrefix() + "§aPlot has been Claimed!");
                         plot.createPlot();
                     } else {
-                        player.sendMessage("§cDu stehst nicht in einem Plot!");
+                        player.sendMessage(plugin.getPrefix() + "§cDu stehst nicht in einem Plot!");
                     }
                 }
             }
@@ -70,7 +72,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                 if (Plot.isPlayerInPlotStatic(player)) {
                     Plot plot = Plot.getPlot(player.getLocation());
                     if (plot == null) {
-                        player.sendMessage("§cDu stehst nicht in einem Plot!");
+                        player.sendMessage(plugin.getPrefix() + "§cDu stehst nicht in einem Plot!");
                         return true;
                     }
                     if (plot.isBuyable()) {
@@ -143,7 +145,8 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                 if (sender instanceof Player) {
                     Player player = (Player) sender;
                     if (!PlotManager.getInstance().getPlotHomes(player).isEmpty() && PlotManager.getInstance().getPlotHomes(player).size() > 0 && Plot.getPlot(PlotManager.getInstance().getPlotHomes(player).get(0)) == null) {
-                        System.out.println("plot is null");
+                        player.sendMessage(plugin.getPrefix() + "§cNo Plot has been Found!");
+                        return true;
                     }
                     player.teleport(Plot.getPlot(PlotManager.getInstance().getPlotHomes(player).get(0)).getHome());
                 }
@@ -154,7 +157,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                     if (Plot.isPlayerInPlotStatic(player)) {
                         Plot plot = Plot.getPlot(player.getLocation());
                         if (plot == null) {
-                            System.out.println("plot is null");
+                            player.sendMessage(plugin.getPrefix() + "§aNo Plot has been Found!");
                             return true;
                         }
                         if (plot.isOwner(player)) {
@@ -177,7 +180,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                         }
                         if (plot.isOwner(player)) {
                             plot.setPrice(price);
-                            player.sendMessage(plugin.getPrefix() + "§aDu hast denn Preis auf §6" + price + " §agesetzt!");
+                            player.sendMessage(plugin.getPrefix() + "§aDu hast denn Preis auf §6" + price + " §agesetzt! §aDieses Plot kann nun gekauft werden für §6" + price + "!");
                             plot.createPlot();
                             return true;
                         }
@@ -193,7 +196,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                             return true;
                         }
                         player.teleport(Plot.getPlot(PlotManager.getInstance().getPlotHomes(player).get(Integer.parseInt(args[1]) - 1)).getHome());
-                    } catch (IndexOutOfBoundsException e) {
+                    } catch (Exception e) {
                         player.sendMessage(plugin.getPrefix() + "§cPlot Home not found!");
                         return true;
                     }
@@ -269,7 +272,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                 if (Plot.isPlayerInPlotStatic(player)) {
                     Plot plot = Plot.getPlot(player.getLocation());
                     if (plot == null) {
-                        player.sendMessage("null");
+                        player.sendMessage(plugin.getPrefix() + "§cNo Plot has been Found!");
                         return true;
                     }
                     plot.removeOwner(player.getUniqueId());
@@ -292,7 +295,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                 if (Plot.isPlayerInPlotStatic(player)) {
                     Plot plot = Plot.getPlot(player.getLocation());
                     if (plot == null) {
-                        player.sendMessage("null");
+                        player.sendMessage(plugin.getPrefix() + "§cNo Plot has been Found!");
                         return true;
                     }
                     plot.removeOwner(Bukkit.getOfflinePlayer(args[1]).getUniqueId());
@@ -321,7 +324,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                     if (args[1].equalsIgnoreCase("add")) {
                         if (plot.hasOwner()) {
                             if (plot.getOwners() != null && plot.getOwners().contains(player.getUniqueId())) {
-                                Flag flag = Flag.valueOf(args[2]);
+                                Flag flag = Flag.valueOf(args[2].toUpperCase());
                                 plot.addFlag(flag);
                                 player.sendMessage("§aFlag §6" + flag + " §awurde hinzugefügt!");
                             }
@@ -329,7 +332,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                     } else if (args[1].equalsIgnoreCase("remove")) {
                         if (plot.hasOwner()) {
                             if (plot.getOwners() != null && plot.getOwners().contains(player.getUniqueId())) {
-                                Flag flag = Flag.valueOf(args[2]);
+                                Flag flag = Flag.valueOf(args[2].toUpperCase());
                                 plot.removeFlag(flag);
                                 player.sendMessage("§aFlag §6" + flag + " §awurde entfernt!");
                             }

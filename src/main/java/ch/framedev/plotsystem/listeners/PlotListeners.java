@@ -24,9 +24,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
+ * Plot Listeners
+ * <p>
  * / This Plugin was Created by FrameDev
  * / Package : ch.framedev.plotsystem.listeners
  * / ClassName PlotListeners
@@ -78,6 +81,8 @@ public class PlotListeners implements Listener {
     }
 
     /**
+     * Used for Protecting the Plot
+     *
      * @param event Block Place Event
      */
     @EventHandler
@@ -164,8 +169,8 @@ public class PlotListeners implements Listener {
                     if (!plot.hasFlag(Flag.FALL_DAMAGE)) {
                         if (event.getCause() == EntityDamageEvent.DamageCause.FALL)
                             event.setCancelled(true);
-                    } else if(!plot.hasFlag(Flag.MOB_DAMAGE))
-                        if(event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK)
+                    } else if (!plot.hasFlag(Flag.MOB_DAMAGE))
+                        if (event.getCause() == EntityDamageEvent.DamageCause.ENTITY_ATTACK)
                             event.setCancelled(true);
                 } else {
                     if (!event.getEntity().hasPermission("plotsystem.admin.ignore")) {
@@ -176,6 +181,8 @@ public class PlotListeners implements Listener {
     }
 
     /**
+     * Protect your chests and other things in your Plot
+     *
      * @param event PlayerInteractEvent
      */
     @EventHandler
@@ -241,6 +248,11 @@ public class PlotListeners implements Listener {
         }
     }
 
+    /**
+     * Protect Explosions when in Plot and has not Flag "EXPLOSION"
+     *
+     * @param event
+     */
     @EventHandler
     public void onExplode(ExplosionPrimeEvent event) {
         if (event.getEntity() instanceof TNTPrimed) {
@@ -294,12 +306,12 @@ public class PlotListeners implements Listener {
                     if (plot.getMembers() == null) {
                         if (plot.isPlayerBanned(event.getPlayer()) && !event.getPlayer().hasPermission("plotsystem.admin.ignore")) {
                             event.getPlayer().teleport(event.getFrom());
-                            event.getPlayer().sendMessage("/phome");
+                            event.getPlayer().sendMessage("/p home");
                         }
                     } else if (!plot.getMembers().contains(event.getPlayer().getUniqueId())) {
                         if (plot.isPlayerBanned(event.getPlayer()) && !event.getPlayer().hasPermission("plotsystem.admin.ignore")) {
                             event.getPlayer().teleport(event.getFrom());
-                            event.getPlayer().sendMessage("/phome");
+                            event.getPlayer().sendMessage("/p home");
                         }
                     }
             } else {
@@ -342,7 +354,7 @@ public class PlotListeners implements Listener {
         new BukkitRunnable() {
             @Override
             public void run() {
-                for (Entity entity : Bukkit.getWorld(Main.getInstance().getConfig().getString("PlotWorld")).getEntities()) {
+                for (Entity entity : Bukkit.getWorld(Objects.requireNonNull(Main.getInstance().getConfig().getString("PlotWorld"))).getEntities()) {
                     if (Plot.isLocationInPlot(entity.getLocation())) {
                         Plot plot = Plot.getPlot(entity.getLocation());
                         if (plot == null) continue;
