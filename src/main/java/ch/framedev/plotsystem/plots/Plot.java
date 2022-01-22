@@ -15,6 +15,7 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
+ * Class for Plot
  * / This Plugin was Created by FrameDev
  * / Package : de.framedev.plotsystem.plots
  * / ClassName Plot
@@ -138,6 +139,11 @@ public class Plot implements Serializable, ConfigurationSerializable {
         return new Plot(map);
     }
 
+    /**
+     * Return the id of the Plot
+     *
+     * @return return the id of the Plot
+     */
     public int getId() {
         return id;
     }
@@ -146,10 +152,20 @@ public class Plot implements Serializable, ConfigurationSerializable {
         this.id = id;
     }
 
+    /**
+     * Return the Owner of the Plot
+     *
+     * @return return the Owner of the Plot
+     */
     public UUID getOwner() {
         return owner;
     }
 
+    /**
+     * Set the new Owner of the Plot
+     *
+     * @param owner the Selected new Owner
+     */
     public void setOwner(UUID owner) {
         this.owner = owner;
         if (this.owners == null) this.owners = new ArrayList<>();
@@ -184,9 +200,8 @@ public class Plot implements Serializable, ConfigurationSerializable {
     }
 
     public boolean inPlot(Location location) {
-        if (this.cuboid != null)
-            return cuboid.contains(location);
-        return false;
+        if (this.cuboid == null) throw new NullPointerException("Cuboid is Null");
+        return cuboid.contains(location);
     }
 
     public boolean isPlayerInPlot(Player player) {
@@ -340,7 +355,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
             if (Main.getInstance().getVaultManager() != null) {
                 if (owner != null) {
                     if (Main.getInstance().getVaultManager().getEconomy().has(newOwner, price)) {
-                        if(hasFlag(Flag.SELL)) {
+                        if (hasFlag(Flag.SELL)) {
                             Main.getInstance().getVaultManager().getEconomy().withdrawPlayer(newOwner, price);
                             Main.getInstance().getVaultManager().getEconomy().depositPlayer(Bukkit.getOfflinePlayer(owner), price);
                             owner = null;
@@ -462,8 +477,15 @@ public class Plot implements Serializable, ConfigurationSerializable {
         return null;
     }
 
+    /**
+     * Return all Player Plots if is Owner or Member
+     *
+     * @param player the selected Player
+     * @return return all Player Plots
+     */
     public static List<Plot> getPlayerPlots(OfflinePlayer player) {
         List<Plot> plots = new ArrayList<>();
+        if (getPlots() == null) return plots;
         for (Plot plot : getPlots()) {
             if (plot.isOwner(player) || plot.isMember(player))
                 plots.add(plot);
@@ -471,6 +493,11 @@ public class Plot implements Serializable, ConfigurationSerializable {
         return plots;
     }
 
+    /**
+     * Return the highest id of the created Plots
+     *
+     * @return return the highest id of Plots
+     */
     public static int getHighestId() {
         if (getPlots() == null) return 0;
         int highest = 0;

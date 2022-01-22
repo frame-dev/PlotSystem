@@ -12,10 +12,13 @@ import ch.framedev.plotsystem.utils.VaultManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,21 +62,24 @@ public final class Main extends JavaPlugin {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if(getServer().getPluginManager().getPlugin("Vault") != null) {
+                if (getServer().getPluginManager().getPlugin("Vault") != null) {
                     vaultManager = new VaultManager();
                 }
-                if(getServer().getPluginManager().getPlugin("MySQLAPI") != null) {
+                if (getServer().getPluginManager().getPlugin("MySQLAPI") != null) {
                     databaseManager = new DatabaseManager(instance);
                     sql = databaseManager.isSql();
                     mysql = databaseManager.isMysql();
                 }
             }
-        }.runTaskLater(this, 4*20);
+        }.runTaskLater(this, 4 * 20);
 
         new PlotSystemAPI();
         Bukkit.getConsoleSender().sendMessage(getPrefix() + "§6API Enabled!");
 
         Bukkit.getConsoleSender().sendMessage(getPrefix() + "§cis work in progress!");
+
+        writePermissionsFile();
+        Bukkit.getConsoleSender().sendMessage(getPrefix() + "§aYou find the Permissions in §6plugins/PlotSystem/permissions.txt §4§l!");
     }
 
     @Override
@@ -138,5 +144,19 @@ public final class Main extends JavaPlugin {
 
     public HashMap<Player, Long> getLimitedHashMap() {
         return limitedHashMap;
+    }
+
+    public void writePermissionsFile() {
+        File file = new File(getDataFolder(), "permissions.txt");
+        try {
+            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
+            for (Permission permissions : getDescription().getPermissions()) {
+                bufferedWriter.append(permissions.getName()).append("\n");
+            }
+            bufferedWriter.flush();
+            bufferedWriter.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 }
