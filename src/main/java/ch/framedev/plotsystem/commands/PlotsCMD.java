@@ -4,6 +4,8 @@ import ch.framedev.plotsystem.main.Main;
 import ch.framedev.plotsystem.plots.Flag;
 import ch.framedev.plotsystem.plots.Plot;
 import ch.framedev.plotsystem.plots.PlotManager;
+import ch.framedev.plotsystem.plots.PlotStatus;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -62,6 +64,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                         plot.setOwner(player.getUniqueId());
                         player.sendMessage(plugin.getPrefix() + "§aPlot has been Claimed!");
                         plot.createPlot();
+                        plot.setStatus(PlotStatus.CLAIMED);
                     } else {
                         player.sendMessage(plugin.getPrefix() + "§cDu stehst nicht in einem Plot!");
                     }
@@ -77,6 +80,8 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                     }
                     if (plot.isBuyable()) {
                         if (plot.buyPlot(player)) {
+                            plot.setStatus(PlotStatus.CLAIMED);
+                            plot.createPlot();
                             player.sendMessage(plugin.getPrefix() + "§aDir gehört nun dieses Plot!");
                         } else {
                             player.sendMessage(plugin.getPrefix() + "§cFehler beim Kaufen dieses Plots!");
@@ -113,6 +118,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                     } else {
                         player.sendMessage("§cNot Claimed!");
                     }
+                    player.sendMessage("§aStatus : §6" + plot.getStatus().name());
                     List<String> owners = new ArrayList<>();
                     for (UUID uuid : plot.getOwners()) {
                         owners.add(Bukkit.getOfflinePlayer(uuid).getName());
@@ -181,6 +187,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                         if (plot.isOwner(player)) {
                             plot.setPrice(price);
                             player.sendMessage(plugin.getPrefix() + "§aDu hast denn Preis auf §6" + price + " §agesetzt! §aDieses Plot kann nun gekauft werden für §6" + price + "!");
+                            plot.setStatus(PlotStatus.FOR_SALE);
                             plot.createPlot();
                             return true;
                         }
@@ -277,6 +284,8 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                     }
                     plot.removeOwner(player.getUniqueId());
                     plot.setOwner(Bukkit.getOfflinePlayer(args[1]).getUniqueId());
+                    plot.setStatus(PlotStatus.CLAIMED);
+                    plot.createPlot();
                     plot.createPlot();
                     player.sendMessage("§aOwner wurde geändert auf §6" + Bukkit.getOfflinePlayer(args[1]).getName());
                 }

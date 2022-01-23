@@ -2,6 +2,7 @@ package ch.framedev.plotsystem.commands;
 
 import ch.framedev.plotsystem.main.Main;
 import ch.framedev.plotsystem.plots.Plot;
+import ch.framedev.plotsystem.plots.PlotStatus;
 import ch.framedev.plotsystem.plots.PlotsSetup;
 import ch.framedev.plotsystem.utils.Cuboid;
 import org.bukkit.Location;
@@ -109,6 +110,7 @@ public class CreateCMD implements CommandExecutor, Listener {
                                     corner.getWorld().getHighestBlockAt(corner.getLocation()).getLocation().add(0, 1, 0).getBlock().setType(Material.GLOWSTONE);
                                 }
                                 plot.setOwner(player.getUniqueId());
+                                plot.setStatus(PlotStatus.CLAIMED);
                                 plot.createPlot();
                                 player.teleport(player.getWorld().getHighestBlockAt(locations.get(player).get("1")).getLocation());
                                 player.sendMessage("§6Plot Created and Claimed!");
@@ -142,6 +144,7 @@ public class CreateCMD implements CommandExecutor, Listener {
                                         corner.getWorld().getHighestBlockAt(corner.getLocation()).getLocation().add(0, 1, 0).getBlock().setType(Material.GLOWSTONE);
                                     }
                                     plot.setOwner(player.getUniqueId());
+                                    plot.setStatus(PlotStatus.CLAIMED);
                                     plot.createPlot();
                                     player.teleport(player.getWorld().getHighestBlockAt(locations.get(player).get("1")).getLocation());
                                     player.sendMessage("§6Plot Created and Claimed!");
@@ -166,6 +169,7 @@ public class CreateCMD implements CommandExecutor, Listener {
                                 corner.getWorld().getHighestBlockAt(corner.getLocation()).getLocation().add(0, 1, 0).getBlock().setType(Material.GLOWSTONE);
                             }
                             plot.setOwner(player.getUniqueId());
+                            plot.setStatus(PlotStatus.CLAIMED);
                             plot.createPlot();
                             player.teleport(player.getWorld().getHighestBlockAt(locations.get(player).get("1")).getLocation());
                             player.sendMessage("§6Plot Created and Claimed!");
@@ -187,6 +191,7 @@ public class CreateCMD implements CommandExecutor, Listener {
                                     corner.getWorld().getHighestBlockAt(corner.getLocation()).getLocation().add(0, 1, 0).getBlock().setType(Material.GLOWSTONE);
                                 }
                                 plot.setOwner(player.getUniqueId());
+                                plot.setStatus(PlotStatus.CLAIMED);
                                 plot.createPlot();
                                 player.teleport(player.getWorld().getHighestBlockAt(locations.get(player).get("1")).getLocation());
                                 player.sendMessage("§6Plot Created and Claimed!");

@@ -37,6 +37,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
     private List<UUID> members;
     private String home;
     private double price = 0;
+    private PlotStatus status;
 
     public Plot(int id, Location location1, Location location2) {
         this.id = id;
@@ -133,6 +134,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
         this.flags = flags;
         this.home = (String) map.get("home");
         this.price = (double) map.get("price");
+        this.status = PlotStatus.valueOf((String) map.get("status"));
     }
 
     public static Plot deserialize(Map<String, Object> map) {
@@ -378,6 +380,14 @@ public class Plot implements Serializable, ConfigurationSerializable {
         return price != 0 && hasFlag(Flag.SELL);
     }
 
+    public void setStatus(PlotStatus status) {
+        this.status = status;
+    }
+
+    public PlotStatus getStatus() {
+        return status;
+    }
+
     @Override
     public String toString() {
         return "Plot{" +
@@ -559,6 +569,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
         map.put("flags", flagList);
         map.put("home", home);
         map.put("price", price);
+        map.put("status", status.name());
         return map;
     }
 
