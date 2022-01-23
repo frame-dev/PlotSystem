@@ -48,10 +48,14 @@ public final class Main extends JavaPlugin {
         this.limitedAmount = getConfig().getLong("MaxBlockClaim.Amount");
         this.limitedHashMap = new HashMap<>();
 
+        // Commands
         new CreateCMD(this);
         new PlotsCMD(this);
+
+        // Listeners
         new PlotListeners(this);
         new PlayerListeners(this);
+        
         new PlotManager();
 
         // Serialization Enable

@@ -1,7 +1,7 @@
 name: PlotSystem
 version: '${project.version}'
 main: ch.framedev.plotsystem.main.Main
-api-version: 1.17
+api-version: '1.13'
 authors: [ FrameDev ]
 website: https://framedev.ch
 
@@ -17,6 +17,7 @@ commands:
   createplot:
   claim:
   pmarker:
+    description: Gives you the Marker for selecting your two Locations
 
 permissions:
   plotsystem.*:
