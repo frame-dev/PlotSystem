@@ -49,6 +49,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
         this.bannedPlayers = new ArrayList<>();
         this.members = new ArrayList<>();
         this.home = locationToString(cuboid.getCenter());
+        this.status = PlotStatus.NOT_CLAIMED;
     }
 
     public Plot(Location location1, Location location2, int id, UUID owner) {
@@ -63,6 +64,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
         this.bannedPlayers = new ArrayList<>();
         this.members = new ArrayList<>();
         this.home = locationToString(cuboid.getCenter());
+        this.status = PlotStatus.NOT_CLAIMED;
     }
 
     public Plot(int id, Chunk chunk) {
@@ -75,6 +77,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
         this.bannedPlayers = new ArrayList<>();
         this.members = new ArrayList<>();
         this.home = locationToString(cuboid.getCenter());
+        this.status = PlotStatus.NOT_CLAIMED;
     }
 
     public Plot(int id, Cuboid cuboid, UUID owner) {
@@ -87,6 +90,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
         this.bannedPlayers = new ArrayList<>();
         this.members = new ArrayList<>();
         this.home = locationToString(cuboid.getCenter());
+        this.status = PlotStatus.NOT_CLAIMED;
     }
 
     public Plot(Plot plot) {
@@ -98,6 +102,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
         this.members = plot.bannedPlayers;
         this.home = plot.home;
         this.price = plot.price;
+        this.status = plot.status;
     }
 
     @SuppressWarnings("unchecked")
