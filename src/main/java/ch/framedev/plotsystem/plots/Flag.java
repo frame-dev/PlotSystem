@@ -22,7 +22,8 @@ public enum Flag {
     FALL_DAMAGE("FALL_DAMAGE"),
     MOB_DAMAGE("MOB_DAMAGE"),
     SELL("SELL"),
-    FARM_PROTECT("FARM_PROTECT");
+    FARM_PROTECT("FARM_PROTECT"),
+    PLAYERS_BANNED("PLAYERS_BANNED");
 
     private final String type;
 

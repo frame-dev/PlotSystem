@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFadeEvent;
@@ -50,7 +51,7 @@ public class PlotListeners implements Listener {
      *
      * @param event the BlockBreakEvent
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onBreak(BlockBreakEvent event) {
         if (Plot.isLocationInPlot(event.getBlock().getLocation())) {
             Plot plot = Plot.getPlot(event.getBlock().getLocation());
@@ -85,7 +86,7 @@ public class PlotListeners implements Listener {
      *
      * @param event Block Place Event
      */
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlace(BlockPlaceEvent event) {
         if (Plot.isLocationInPlot(event.getBlockPlaced().getLocation())) {
             Plot plot = Plot.getPlot(event.getBlockPlaced().getLocation());

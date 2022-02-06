@@ -155,6 +155,10 @@ public class Plot implements Serializable, ConfigurationSerializable {
         return id;
     }
 
+    /**
+     * Set new ID for the Plot
+     * @param id the new ID
+     */
     public void setId(int id) {
         this.id = id;
     }
@@ -183,6 +187,11 @@ public class Plot implements Serializable, ConfigurationSerializable {
         this.cuboid = cuboid;
     }
 
+    /**
+     * Return the Cuboid for this Plot
+     * 
+     * @return the Cuboid for this Plot
+     */
     public Cuboid getCuboid() {
         return cuboid;
     }
@@ -262,11 +271,16 @@ public class Plot implements Serializable, ConfigurationSerializable {
     }
 
     public void addBannedPlayer(UUID uuid) {
+        if(!hasFlag(Flag.PLAYERS_BANNED))
+            addFlag(Flag.PLAYERS_BANNED);
         if (!bannedPlayers.contains(uuid)) bannedPlayers.add(uuid);
     }
 
     public void removeBannedPlayer(UUID uuid) {
         bannedPlayers.remove(uuid);
+        if(bannedPlayers.size() == 0)
+            if(hasFlag(Flag.PLAYERS_BANNED))
+                removeFlag(Flag.PLAYERS_BANNED);
     }
 
     public boolean isPlayerBanned(Player player) {
@@ -389,6 +403,11 @@ public class Plot implements Serializable, ConfigurationSerializable {
         this.status = status;
     }
 
+    /**
+     * Return the PlotStatus from this Plot
+     * 
+     * @return the PlotStatus from this Plot
+     */
     public PlotStatus getStatus() {
         return status;
     }

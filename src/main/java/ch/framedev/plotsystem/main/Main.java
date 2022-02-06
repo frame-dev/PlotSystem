@@ -55,7 +55,9 @@ public final class Main extends JavaPlugin {
         // Listeners
         new PlotListeners(this);
         new PlayerListeners(this);
-        
+
+
+        // PlotManager
         new PlotManager();
 
         // Serialization Enable
@@ -87,6 +89,7 @@ public final class Main extends JavaPlugin {
         new PlotSystemAPI();
         Bukkit.getConsoleSender().sendMessage(getPrefix() + "§6API Enabled!");
 
+        // W.I.P
         Bukkit.getConsoleSender().sendMessage(getPrefix() + "§cis work in progress!");
 
         // Permissions
@@ -158,6 +161,7 @@ public final class Main extends JavaPlugin {
         return limitedHashMap;
     }
 
+    // Write Permissions File permissions.txt
     public void writePermissionsFile() {
         File file = new File(getDataFolder(), "permissions.txt");
         try {
