@@ -221,6 +221,8 @@ public class CreateCMD implements CommandExecutor, Listener {
                 meta.setDisplayName("§aMarker");
                 itemStack.setItemMeta(meta);
                 player.getInventory().addItem(itemStack);
+                player.sendMessage(plugin.getPrefix() + "§aLeft Click on a Block set's the First Location \n" +
+                        "Right Click on a Block set's the Second Location! Or yust use /pos1 /pos2");
             }
         }
         if (command.getName().

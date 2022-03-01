@@ -66,6 +66,15 @@ public class PlotListeners implements Listener {
                 if (!plot.hasFlag(Flag.EXPLOSIONS))
                     event.setCancelled(true);
             if (plot.hasOwner()) {
+                if (plot.isOwner(event.getPlayer()) || plot.isMember(event.getPlayer())) {
+                    if (event.getBlock().getType() == Material.SPAWNER && plot.hasFlag(Flag.MONSTER_SPAWNER)) {
+                        event.setCancelled(false);
+                    } else {
+                        event.setCancelled(true);
+                    }
+                } else {
+                    event.setCancelled(true);
+                }
                 if (plot.getOwners() != null && !plot.getOwners().contains(event.getPlayer().getUniqueId()))
                     if (plot.getMembers() == null) {
                         if (!event.getPlayer().hasPermission("plotsystem.admin.break"))
@@ -123,6 +132,15 @@ public class PlotListeners implements Listener {
                     }
                 }
             if (plot.hasOwner()) {
+                if (plot.isOwner(event.getPlayer()) || plot.isMember(event.getPlayer())) {
+                    if (event.getBlock().getType() == Material.SPAWNER && plot.hasFlag(Flag.MONSTER_SPAWNER)) {
+                        event.setCancelled(false);
+                    } else {
+                        event.setCancelled(true);
+                    }
+                } else {
+                    event.setCancelled(true);
+                }
                 if (plot.getOwners() != null && !plot.getOwners().contains(event.getPlayer().getUniqueId()))
                     if (plot.getMembers() == null) {
                         if (!event.getPlayer().hasPermission("plotsystem.admin.place"))

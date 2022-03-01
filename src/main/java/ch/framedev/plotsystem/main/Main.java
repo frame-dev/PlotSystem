@@ -1,6 +1,7 @@
 package ch.framedev.plotsystem.main;
 
 import ch.framedev.plotsystem.commands.CreateCMD;
+import ch.framedev.plotsystem.commands.PlotSystemCMDs;
 import ch.framedev.plotsystem.commands.PlotsCMD;
 import ch.framedev.plotsystem.listeners.PlayerListeners;
 import ch.framedev.plotsystem.listeners.PlotListeners;
@@ -51,6 +52,7 @@ public final class Main extends JavaPlugin {
         // Commands
         new CreateCMD(this);
         new PlotsCMD(this);
+        new PlotSystemCMDs(this);
 
         // Listeners
         new PlotListeners(this);
