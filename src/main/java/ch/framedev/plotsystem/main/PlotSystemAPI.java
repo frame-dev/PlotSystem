@@ -2,7 +2,9 @@ package ch.framedev.plotsystem.main;
 
 import ch.framedev.plotsystem.plots.Flag;
 import ch.framedev.plotsystem.plots.Plot;
+import ch.framedev.plotsystem.plots.PlotStatus;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,13 +20,15 @@ import java.util.UUID;
  * / Copyrighted by FrameDev
  */
 
-public class PlotSystemAPI {
+public final class PlotSystemAPI {
 
+    // Instance for API and other stuffs
     private static PlotSystemAPI instance;
-    private final Main plugin;
 
+    /**
+     * PlotSystem Constructor
+     */
     protected PlotSystemAPI() {
-        this.plugin = Main.getInstance();
         instance = this;
     }
 
@@ -32,26 +36,31 @@ public class PlotSystemAPI {
         return instance;
     }
 
+    /**
+     * This Method return this PlotSystemAPI
+     *
+     * @return Returns the PlotSystemAPI
+     */
     public static PlotSystemAPI getAPI() {
         return instance;
     }
 
     public List<String> getDefaultFlags() {
-        return plugin.getDefaultFlags();
+        return Main.getInstance().getDefaultFlags();
     }
 
     public boolean isLimitedClaim() {
-        return plugin.isLimitedClaim();
+        return Main.getInstance().isLimitedClaim();
     }
 
     public long getLimitedBlocksDefault() {
-        return plugin.getLimitedAmount();
+        return Main.getInstance().getLimitedAmount();
     }
 
     public long getAvailableBlocksForPlayer(Player player) {
-        if (plugin.getLimitedHashMap().isEmpty()) return 0;
-        if (!plugin.getLimitedHashMap().containsKey(player)) return 0;
-        return plugin.getLimitedHashMap().get(player);
+        if (Main.getInstance().getLimitedHashMap().isEmpty()) return 0;
+        if (!Main.getInstance().getLimitedHashMap().containsKey(player)) return 0;
+        return Main.getInstance().getLimitedHashMap().get(player);
     }
 
     public @Nullable Plot getPlotById(int id) {
@@ -70,10 +79,18 @@ public class PlotSystemAPI {
         return Flag.getFlag(flag.toUpperCase());
     }
 
+    /**
+     * @param plot the Selected Plot
+     * @return returns a list of UUIDs of all Players
+     */
     public List<UUID> getMembers(Plot plot) {
         return plot.getMembers();
     }
 
+    /**
+     * @param plot the selected Plot
+     * @return returns a list of all Owners from the Plot
+     */
     public List<UUID> getOwners(Plot plot) {
         return plot.getOwners();
     }
@@ -92,5 +109,43 @@ public class PlotSystemAPI {
 
     public void removeFlag(Plot plot, Flag... flags) {
         plot.removeFlag(flags);
+    }
+
+    public PlotStatus getPlotStatus(Plot plot) {
+        return plot.getStatus();
+    }
+
+    public PlotStatus getPlotStatusById(int statusId) {
+        return PlotStatus.getPlotStatus(statusId);
+    }
+
+    public int getPlotStatusById(Plot plot) {
+        return plot.getStatus().getStatusId();
+    }
+
+    public boolean isInPlot(Location location) {
+        if (Plot.getPlots() == null) return false;
+        boolean success = false;
+        for (Plot plot : Plot.getPlots()) {
+            if (plot.inPlot(location)) success = true;
+        }
+        return success;
+    }
+
+    public boolean isInPlot(Block block) {
+        if (Plot.getPlots() == null) return false;
+        boolean success = false;
+        for (Plot plot : Plot.getPlots()) {
+            if (plot.inPlot(block.getLocation())) success = true;
+        }
+        return success;
+    }
+
+    public boolean isInPlot(Player player) {
+        if (Plot.getPlots() == null) return false;
+        boolean success = false;
+        for (Plot plot : Plot.getPlots())
+            if (plot.inPlot(player.getLocation())) success = true;
+        return success;
     }
 }

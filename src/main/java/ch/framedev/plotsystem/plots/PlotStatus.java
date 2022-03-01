@@ -10,20 +10,20 @@ public enum PlotStatus {
     FOR_SALE(3),
     SOLD(4);
 
-    private final int status;
+    private final int statusId;
 
-    PlotStatus(int status) {
-        this.status = status;
+    PlotStatus(int statusId) {
+        this.statusId = statusId;
     }
 
-    public int getStatus() {
-        return status;
+    public int getStatusId() {
+        return statusId;
     }
 
-    public static @Nullable PlotStatus getPlotStatus(int status) {
-        for(PlotStatus plotStatus : PlotStatus.values())
-            if(status == plotStatus.status) 
-            return plotStatus; 
+    public static @Nullable PlotStatus getPlotStatus(int statusId) {
+        for (PlotStatus plotStatus : PlotStatus.values())
+            if (statusId == plotStatus.statusId)
+                return plotStatus;
         return null;
     }
 }

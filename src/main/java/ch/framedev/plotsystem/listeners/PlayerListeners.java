@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -59,6 +60,16 @@ public class PlayerListeners implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onQuit(PlayerQuitEvent event) {
+        if (plugin.isLimitedClaim()) {
+            if (plugin.getLimitedHashMap().containsKey(event.getPlayer())) {
+                plugin.getConfig().set(event.getPlayer().getName(), plugin.getLimitedHashMap().get(event.getPlayer()));
+                plugin.saveConfig();
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onKick(PlayerKickEvent event) {
         if (plugin.isLimitedClaim()) {
             if (plugin.getLimitedHashMap().containsKey(event.getPlayer())) {
                 plugin.getConfig().set(event.getPlayer().getName(), plugin.getLimitedHashMap().get(event.getPlayer()));

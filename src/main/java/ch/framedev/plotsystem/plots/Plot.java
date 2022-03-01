@@ -157,6 +157,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
 
     /**
      * Set new ID for the Plot
+     *
      * @param id the new ID
      */
     public void setId(int id) {
@@ -189,7 +190,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
 
     /**
      * Return the Cuboid for this Plot
-     * 
+     *
      * @return the Cuboid for this Plot
      */
     public Cuboid getCuboid() {
@@ -271,15 +272,15 @@ public class Plot implements Serializable, ConfigurationSerializable {
     }
 
     public void addBannedPlayer(UUID uuid) {
-        if(!hasFlag(Flag.PLAYERS_BANNED))
+        if (!hasFlag(Flag.PLAYERS_BANNED))
             addFlag(Flag.PLAYERS_BANNED);
         if (!bannedPlayers.contains(uuid)) bannedPlayers.add(uuid);
     }
 
     public void removeBannedPlayer(UUID uuid) {
         bannedPlayers.remove(uuid);
-        if(bannedPlayers.size() == 0)
-            if(hasFlag(Flag.PLAYERS_BANNED))
+        if (bannedPlayers.size() == 0)
+            if (hasFlag(Flag.PLAYERS_BANNED))
                 removeFlag(Flag.PLAYERS_BANNED);
     }
 
@@ -389,6 +390,20 @@ public class Plot implements Serializable, ConfigurationSerializable {
                             return true;
                         }
                     }
+                } else {
+                    if (Main.getInstance().getVaultManager().getEconomy().has(newOwner, price)) {
+                        if (hasFlag(Flag.SELL)) {
+                            Main.getInstance().getVaultManager().getEconomy().withdrawPlayer(newOwner, price);
+                            owner = null;
+                            owners.clear();
+                            members.clear();
+                            setPrice(0);
+                            setOwner(newOwner.getUniqueId());
+                            removeFlag(getFlags().toArray(new Flag[0]));
+                            createPlot();
+                            return true;
+                        }
+                    }
                 }
             }
         }
@@ -405,11 +420,15 @@ public class Plot implements Serializable, ConfigurationSerializable {
 
     /**
      * Return the PlotStatus from this Plot
-     * 
+     *
      * @return the PlotStatus from this Plot
      */
     public PlotStatus getStatus() {
         return status;
+    }
+
+    public void setStatus(int statusId) {
+        this.status = PlotStatus.getPlotStatus(statusId);
     }
 
     @Override
