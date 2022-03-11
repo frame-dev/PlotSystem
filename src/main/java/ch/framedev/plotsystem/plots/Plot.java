@@ -28,9 +28,11 @@ public class Plot implements Serializable, ConfigurationSerializable {
 
     private static final long serialVersionUID = 5964991476365408930L;
 
+    // Required for the Plot to be found
     private int id;
     private UUID owner;
     private List<UUID> owners;
+    // Required for the Plot
     private Cuboid cuboid;
     private List<Flag> flags;
     private List<UUID> bannedPlayers;
@@ -445,7 +447,6 @@ public class Plot implements Serializable, ConfigurationSerializable {
                 '}';
     }
 
-    @SuppressWarnings("unchecked")
     public void createPlot() {
         File fileCfg = new File(Main.getInstance().getDataFolder(), "plots.yml");
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(fileCfg);
@@ -464,6 +465,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
                 e.printStackTrace();
             }
         } else {
+            //noinspection unchecked
             plots = (List<Plot>) cfg.getList("Plots");
             if (plots == null) return;
             plots.removeIf(plot -> plot.id == this.id);
@@ -492,11 +494,11 @@ public class Plot implements Serializable, ConfigurationSerializable {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     public static List<Plot> getPlots() {
         File fileCfg = new File(Main.getInstance().getDataFolder(), "plots.yml");
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(fileCfg);
         if (cfg.contains("Plots"))
+            //noinspection unchecked
             return (List<Plot>) cfg.getList("Plots");
         return null;
     }
@@ -616,6 +618,11 @@ public class Plot implements Serializable, ConfigurationSerializable {
         return map;
     }
 
+    /**
+     * Clone this Plot
+     *
+     * @return return the Cloned Plot
+     */
     @Override
     public Plot clone() {
         return new Plot(this);

@@ -20,7 +20,7 @@ import java.util.UUID;
  * / Copyrighted by FrameDev
  */
 
-public final class PlotSystemAPI {
+public class PlotSystemAPI {
 
     // Instance for API and other stuffs
     private static PlotSystemAPI instance;
@@ -45,6 +45,11 @@ public final class PlotSystemAPI {
         return instance;
     }
 
+    /**
+     * Returns the Default Flags for the Plots they can be changed in the config.yml from the PlotSystem
+     *
+     * @return return the Default Flags for the Plots
+     */
     public List<String> getDefaultFlags() {
         return Main.getInstance().getDefaultFlags();
     }
@@ -111,6 +116,12 @@ public final class PlotSystemAPI {
         plot.removeFlag(flags);
     }
 
+    /**
+     * Return the Status of the giving Plot
+     *
+     * @param plot the Selected Plot to get the PlotStatus
+     * @return return the PlotStatus from the Plot
+     */
     public PlotStatus getPlotStatus(Plot plot) {
         return plot.getStatus();
     }
@@ -123,6 +134,12 @@ public final class PlotSystemAPI {
         return plot.getStatus().getStatusId();
     }
 
+    /**
+     * Return if the Location is inside a Plot
+     *
+     * @param location the Selected Location to check if it is in a Plot
+     * @return return if the Location is inside a Plot
+     */
     public boolean isInPlot(Location location) {
         if (Plot.getPlots() == null) return false;
         boolean success = false;
@@ -132,6 +149,12 @@ public final class PlotSystemAPI {
         return success;
     }
 
+    /**
+     * Return if the Block is inside a Plot
+     *
+     * @param block the Block to check if it is in a Plot
+     * @return return if the Block is inside a Plot
+     */
     public boolean isInPlot(Block block) {
         if (Plot.getPlots() == null) return false;
         boolean success = false;
@@ -141,6 +164,12 @@ public final class PlotSystemAPI {
         return success;
     }
 
+    /**
+     * Return if the Player is inside a Plot
+     *
+     * @param player the Selected Player to check if it is in a Plot
+     * @return return if the Player is inside a Plot
+     */
     public boolean isInPlot(Player player) {
         if (Plot.getPlots() == null) return false;
         boolean success = false;

@@ -67,13 +67,9 @@ public class PlotListeners implements Listener {
                     event.setCancelled(true);
             if (plot.hasOwner()) {
                 if (plot.isOwner(event.getPlayer()) || plot.isMember(event.getPlayer())) {
-                    if (event.getBlock().getType() == Material.SPAWNER && plot.hasFlag(Flag.MONSTER_SPAWNER)) {
-                        event.setCancelled(false);
-                    } else {
+                    if (event.getBlock().getType() == Material.SPAWNER && !plot.hasFlag(Flag.MONSTER_SPAWNER)) {
                         event.setCancelled(true);
                     }
-                } else {
-                    event.setCancelled(true);
                 }
                 if (plot.getOwners() != null && !plot.getOwners().contains(event.getPlayer().getUniqueId()))
                     if (plot.getMembers() == null) {
@@ -133,13 +129,9 @@ public class PlotListeners implements Listener {
                 }
             if (plot.hasOwner()) {
                 if (plot.isOwner(event.getPlayer()) || plot.isMember(event.getPlayer())) {
-                    if (event.getBlock().getType() == Material.SPAWNER && plot.hasFlag(Flag.MONSTER_SPAWNER)) {
-                        event.setCancelled(false);
-                    } else {
+                    if (event.getBlock().getType() == Material.SPAWNER && !plot.hasFlag(Flag.MONSTER_SPAWNER)) {
                         event.setCancelled(true);
                     }
-                } else {
-                    event.setCancelled(true);
                 }
                 if (plot.getOwners() != null && !plot.getOwners().contains(event.getPlayer().getUniqueId()))
                     if (plot.getMembers() == null) {
@@ -369,6 +361,10 @@ public class PlotListeners implements Listener {
         }
     }
 
+    /**
+     * Used for the Flags Flag.ANIMALS and Flag.MONSTERS
+     * This despawns the entities if they not allowed
+     */
     public void onUpdate() {
         new BukkitRunnable() {
             @Override

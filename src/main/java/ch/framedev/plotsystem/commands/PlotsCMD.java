@@ -40,7 +40,6 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
     public PlotsCMD(Main plugin) {
         this.plugin = plugin;
         plugin.getCommand("plot").setExecutor(this);
-        plugin.getServer().getConsoleSender().sendMessage(plugin.getPrefix() + "§aPlots Commands Registered!");
     }
 
     @SuppressWarnings("deprecation")

@@ -33,7 +33,7 @@ import java.util.HashMap;
 
 public class CreateCMD implements CommandExecutor, Listener {
 
-    private HashMap<Player, HashMap<String, Location>> locations;
+    private final HashMap<Player, HashMap<String, Location>> locations;
     private final Main plugin;
 
     public CreateCMD(Main plugin) {

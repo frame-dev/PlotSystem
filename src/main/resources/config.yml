@@ -1,3 +1,5 @@
+Prefix: '&6[&aPlot&bSystem&6] &c>> &7'
+
 DefaultFlags:
   - REDSTONE
   - FALL_DAMAGE

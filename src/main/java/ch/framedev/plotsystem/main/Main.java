@@ -36,6 +36,12 @@ public final class Main extends JavaPlugin {
     private boolean limitedClaim;
     private long limitedAmount;
     private HashMap<Player, Long> limitedHashMap;
+    private long updateTime;
+
+    @Override
+    public void onLoad() {
+
+    }
 
     @Override
     public void onEnable() {
@@ -48,6 +54,8 @@ public final class Main extends JavaPlugin {
         this.limitedClaim = getConfig().getBoolean("MaxBlockClaim.Limited");
         this.limitedAmount = getConfig().getLong("MaxBlockClaim.Amount");
         this.limitedHashMap = new HashMap<>();
+
+        this.updateTime = getConfig().getLong("UpdateTime");
 
         // Commands
         new CreateCMD(this);
@@ -96,11 +104,12 @@ public final class Main extends JavaPlugin {
 
         // Permissions
         writePermissionsFile();
-        Bukkit.getConsoleSender().sendMessage(getPrefix() + "§aYou find the Permissions in §6plugins/PlotSystem/permissions.txt §4§l!");
+        Bukkit.getConsoleSender().sendMessage(getPrefix() + "§aYou find the Permissions in §6'plugins/PlotSystem/permissions.txt' §4§l!");
     }
 
     @Override
     public void onDisable() {
+        Bukkit.getConsoleSender().sendMessage(getPrefix() + "§cPlotSystem Disabled!! Bye...");
     }
 
     public List<String> getDefaultFlags() {
@@ -136,7 +145,13 @@ public final class Main extends JavaPlugin {
     }
 
     public String getPrefix() {
-        return "§6[§bPlot§aSystem§6] §c» §7";
+        String prefix = getConfig().getString("Prefix");
+        if (prefix == null) return "§6[§bPlot§aSystem§6] §c» §7";
+        if (prefix.contains("&"))
+            prefix = prefix.replace('&', '§');
+        if (prefix.contains(">>"))
+            prefix = prefix.replace(">>", "»");
+        return prefix;
     }
 
     public DatabaseManager getDatabaseManager() {
@@ -161,6 +176,10 @@ public final class Main extends JavaPlugin {
 
     public HashMap<Player, Long> getLimitedHashMap() {
         return limitedHashMap;
+    }
+
+    public long getUpdateTime() {
+        return updateTime;
     }
 
     // Write Permissions File permissions.txt
