@@ -54,6 +54,11 @@ public final class Main extends JavaPlugin {
         this.limitedClaim = getConfig().getBoolean("MaxBlockClaim.Limited");
         this.limitedAmount = getConfig().getLong("MaxBlockClaim.Amount");
         this.limitedHashMap = new HashMap<>();
+        if(limitedClaim) {
+            Bukkit.getConsoleSender().sendMessage(getPrefix() + "§aLimited Enabled!");
+        } else {
+            Bukkit.getConsoleSender().sendMessage(getPrefix() + "§aLimited Disabled!");
+        }
 
         this.updateTime = getConfig().getLong("UpdateTime");
 

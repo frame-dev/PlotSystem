@@ -46,6 +46,7 @@ public class CreateCMD implements CommandExecutor, Listener {
         plugin.getCommand("claim").setExecutor(this);
         plugin.getCommand("pmarker").setExecutor(this);
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        System.out.println("Registered");
     }
 
     @Override
@@ -88,15 +89,18 @@ public class CreateCMD implements CommandExecutor, Listener {
             }
         }
         if (command.getName().equalsIgnoreCase("claim")) {
+            System.out.println("claim");
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 if (!player.hasPermission("plotsystem.plot.claim")) {
                     player.sendMessage(Main.getInstance().getPrefix() + "§cNo Permissions!");
                     return true;
                 }
+                System.out.println("claim1");
                 if (!locations.isEmpty() && locations.containsKey(player)) {
                     Cuboid cuboid = new Cuboid(locations.get(player).get("1"), locations.get(player).get("2"));
                     ArrayList<Boolean> success = new ArrayList<>();
+                    System.out.println("claim2");
                     if (plugin.isLimitedClaim()) {
                         if (plugin.getLimitedHashMap().containsKey(player)) {
                             if (Plot.getPlots() == null) {
@@ -239,6 +243,10 @@ public class CreateCMD implements CommandExecutor, Listener {
                 } else {
                     if (locations.containsKey(player) && locations.get(player) != null) {
                         locations.get(player).remove("1");
+                    } else {
+                        Location location = player.getLocation();
+                        location.setY(1);
+                        locations.get(player).put("1", location);
                     }
                     Location location = player.getLocation();
                     location.setY(1);
@@ -261,6 +269,10 @@ public class CreateCMD implements CommandExecutor, Listener {
                 } else {
                     if (locations.containsKey(player) && locations.get(player) != null) {
                         locations.get(player).remove("2");
+                    } else {
+                        Location location = player.getLocation();
+                        location.setY(1);
+                        locations.get(player).put("2", location);
                     }
                     Location location = player.getLocation();
                     location.setY(200);
@@ -289,6 +301,10 @@ public class CreateCMD implements CommandExecutor, Listener {
                     } else {
                         if (locations.containsKey(player) && locations.get(player) != null) {
                             locations.get(player).remove("1");
+                        } else {
+                            Location location = player.getLocation();
+                            location.setY(1);
+                            locations.get(player).put("1", location);
                         }
                         Location location = event.getClickedBlock().getLocation();
                         location.setY(1);
@@ -305,6 +321,10 @@ public class CreateCMD implements CommandExecutor, Listener {
                     } else {
                         if (locations.containsKey(player) && locations.get(player) != null) {
                             locations.get(player).remove("2");
+                        } else {
+                            Location location = player.getLocation();
+                            location.setY(1);
+                            locations.get(player).put("2", location);
                         }
                         Location location = event.getClickedBlock().getLocation();
                         location.setY(200);
