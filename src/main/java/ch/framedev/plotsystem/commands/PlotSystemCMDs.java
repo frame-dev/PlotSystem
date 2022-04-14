@@ -20,10 +20,7 @@ import java.util.List;
 
 public class PlotSystemCMDs implements CommandExecutor {
 
-    private final Main plugin;
-
     public PlotSystemCMDs(Main plugin) {
-        this.plugin = plugin;
         plugin.getCommand("plotsystem").setExecutor(this);
     }
 
