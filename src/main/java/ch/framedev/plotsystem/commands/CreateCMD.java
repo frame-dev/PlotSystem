@@ -46,7 +46,6 @@ public class CreateCMD implements CommandExecutor, Listener {
         plugin.getCommand("claim").setExecutor(this);
         plugin.getCommand("pmarker").setExecutor(this);
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
-        System.out.println("Registered");
     }
 
     @Override
