@@ -154,6 +154,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                         return true;
                     }
                     player.teleport(Plot.getPlot(PlotManager.getInstance().getPlotHomes(player).get(0)).getHome());
+                    player.sendMessage(plugin.getPrefix() + "§aYou have been Teleported to your First Plot Home!");
                 }
             }
             if (arg0.equalsIgnoreCase("sethome")) {
@@ -202,6 +203,8 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                             return true;
                         }
                         player.teleport(Plot.getPlot(PlotManager.getInstance().getPlotHomes(player).get(Integer.parseInt(args[1]) - 1)).getHome());
+                        int home = Integer.parseInt(args[1]) - 1;
+                        player.sendMessage(plugin.getPrefix() + "§aYou have been Teleported to the Home from Plot Number §6" + home);
                     } catch (Exception e) {
                         player.sendMessage(plugin.getPrefix() + "§cPlot Home not found!");
                         return true;
