@@ -11,28 +11,36 @@ import ch.framedev.plotsystem.utils.Cuboid;
 import ch.framedev.plotsystem.utils.DatabaseManager;
 import ch.framedev.plotsystem.utils.VaultManager;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 public final class Main extends JavaPlugin {
 
     private static Main instance;
     private List<Plot> plots;
+
+    // A List of all Default Flags wich is located in the config.yml
     private List<String> defaultFlags;
+
+    // This is required for the VaultAPI to enable it
     private VaultManager vaultManager;
     private boolean mysql;
     private boolean sql;
     private DatabaseManager databaseManager;
+
+    // This Boolean is for Limited to set if the Player can Only claim Limited Plots
     private boolean limitedClaim;
     private long limitedAmount;
     private HashMap<Player, Long> limitedHashMap;
@@ -50,7 +58,9 @@ public final class Main extends JavaPlugin {
 
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
+        saveDefaultConfigValues();
 
+        // Limited Plots Init
         this.limitedClaim = getConfig().getBoolean("MaxBlockClaim.Limited");
         this.limitedAmount = getConfig().getLong("MaxBlockClaim.Amount");
         this.limitedHashMap = new HashMap<>();
@@ -92,11 +102,11 @@ public final class Main extends JavaPlugin {
                 if (getServer().getPluginManager().getPlugin("Vault") != null) {
                     vaultManager = new VaultManager();
                 }
-                if (getServer().getPluginManager().getPlugin("MySQLAPI") != null) {
+                /**if (getServer().getPluginManager().getPlugin("MySQLAPI") != null) {
                     databaseManager = new DatabaseManager(instance);
                     sql = databaseManager.isSql();
                     mysql = databaseManager.isMysql();
-                }
+                }*/
             }
         }.runTaskLater(this, 4 * 20);
 
@@ -199,6 +209,20 @@ public final class Main extends JavaPlugin {
             bufferedWriter.close();
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+
+    public void saveDefaultConfigValues() {
+        File file = new File(getDataFolder(), "config.yml");
+        FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
+        //Defaults in jar
+        Reader defConfigStream = null;
+        defConfigStream = new InputStreamReader(Objects.requireNonNull(getResource("config.yml")), StandardCharsets.UTF_8);
+        if (defConfigStream != null) {
+            YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
+            cfg.setDefaults(defConfig);
+            cfg.options().copyDefaults(true);
+            Main.getInstance().saveDefaultConfig();
         }
     }
 }

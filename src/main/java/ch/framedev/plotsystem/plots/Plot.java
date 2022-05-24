@@ -412,6 +412,28 @@ public class Plot implements Serializable, ConfigurationSerializable {
         return false;
     }
 
+    public boolean sellToNone() {
+        if (price != 0) {
+            if (Main.getInstance().getVaultManager() != null) {
+                if (owner != null) {
+                        if (hasFlag(Flag.SELL)) {
+                            Main.getInstance().getVaultManager().getEconomy().withdrawPlayer(Bukkit.getOfflinePlayer(owner), price);
+                            owner = null;
+                            owners.clear();
+                            members.clear();
+                            setPrice(price);
+                            setOwner(null);
+                            removeFlag(getFlags().toArray(new Flag[0]));
+                            setStatus(PlotStatus.FOR_SALE);
+                            createPlot();
+                            return true;
+                        }
+                }
+            }
+        }
+        return false;
+    }
+
     public boolean isBuyable() {
         return price != 0 && hasFlag(Flag.SELL);
     }

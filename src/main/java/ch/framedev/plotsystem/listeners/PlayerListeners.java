@@ -1,8 +1,10 @@
 package ch.framedev.plotsystem.listeners;
 
 import ch.framedev.plotsystem.main.Main;
+import ch.framedev.plotsystem.main.PlotSystemAPI;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -45,15 +47,52 @@ public class PlayerListeners implements Listener {
                             plugin.getLimitedHashMap().put(event.getPlayer(), plugin.getConfig().getLong(event.getPlayer().getName()));
                         }
                     } else {
-                        if (!plugin.getLimitedHashMap().containsKey(event.getPlayer())) {
-                            plugin.getLimitedHashMap().put(event.getPlayer(), plugin.getLimitedAmount());
+                        if (!event.getPlayer().hasPermission("plotsystem.limitedplot.nolimit")) {
+                            if (!plugin.getLimitedHashMap().containsKey(event.getPlayer())) {
+                                plugin.getLimitedHashMap().put(event.getPlayer(), plugin.getLimitedAmount());
+                            } else {
+                                plugin.getLimitedHashMap().remove(event.getPlayer());
+                                plugin.getLimitedHashMap().put(event.getPlayer(), plugin.getLimitedAmount());
+                            }
                         } else {
-                            plugin.getLimitedHashMap().remove(event.getPlayer());
-                            plugin.getLimitedHashMap().put(event.getPlayer(), plugin.getLimitedAmount());
+                            if (!plugin.getLimitedHashMap().containsKey(event.getPlayer())) {
+                                plugin.getLimitedHashMap().put(event.getPlayer(), Long.MAX_VALUE);
+                            } else {
+                                plugin.getLimitedHashMap().remove(event.getPlayer());
+                                plugin.getLimitedHashMap().put(event.getPlayer(), Long.MAX_VALUE);
+                            }
                         }
                     }
                 }
                 event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new ComponentBuilder(plugin.getPrefix() + "§aData Loaded!!!").create());
+                if (plugin.getConfig().getBoolean("Title")) {
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            if (PlotSystemAPI.getAPI().isInPlot(event.getPlayer())) {
+                                if (event.getPlayer().getLocale().startsWith("en_")) {
+                                    if (PlotSystemAPI.getAPI().getPlayerLocationPlot(event.getPlayer()) != null) {
+                                        event.getPlayer().sendTitle("§aWelcome to the Server!", "§aYou are in the Plot from §6" + Bukkit.getOfflinePlayer(PlotSystemAPI.getAPI().getOwner(PlotSystemAPI.getAPI().getPlayerLocationPlot(event.getPlayer()))).getName(), 40, 100, 40);
+                                    } else {
+                                        event.getPlayer().sendTitle("§aWelcome to the Server!", "§cThis Plot isn't Claimed!", 40, 80, 40);
+                                    }
+                                } else if (event.getPlayer().getLocale().startsWith("de")) {
+                                    if (PlotSystemAPI.getAPI().getPlayerLocationPlot(event.getPlayer()) != null) {
+                                        event.getPlayer().sendTitle("§aWillkommen auf dem Server!", "§aDu stehst im Plot von §6" + Bukkit.getOfflinePlayer(PlotSystemAPI.getAPI().getOwner(PlotSystemAPI.getAPI().getPlayerLocationPlot(event.getPlayer()))).getName(), 40, 100, 40);
+                                    } else {
+                                        event.getPlayer().sendTitle("§aWillkomen auf dem Server!", "§cDieses Plot wurde noch nicht beansprucht!", 40, 80, 40);
+                                    }
+                                }
+                            } else {
+                                if (event.getPlayer().getLocale().startsWith("en_")) {
+                                    event.getPlayer().sendTitle("§aWelcome to the Server!", event.getPlayer().getName(), 20, 80, 20);
+                                } else if (event.getPlayer().getLocale().startsWith("de")) {
+                                    event.getPlayer().sendTitle("§aWillkommen auf dem Server!", event.getPlayer().getName(), 20, 80, 20);
+                                }
+                            }
+                        }
+                    }.runTaskLater(plugin, 120);
+                }
             }
         }.runTaskLater(plugin, 120);
     }

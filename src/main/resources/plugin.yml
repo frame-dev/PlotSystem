@@ -6,6 +6,7 @@ authors: [ FrameDev ]
 website: https://framedev.ch
 softdepend:
   - Vault
+  - MySQLAPI
 
 commands:
   create:

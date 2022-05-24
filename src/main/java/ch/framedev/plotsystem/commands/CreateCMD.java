@@ -60,7 +60,7 @@ public class CreateCMD implements CommandExecutor, Listener {
                 if (!locations.isEmpty() && locations.containsKey(player)) {
                     try {
                         new PlotsSetup(new Cuboid(locations.get(player).get("1"), locations.get(player).get("2")))
-                                .create(Plot.getHighestId() + 1);
+                                .createFromChunks(Plot.getHighestId() + 1);
                     } catch (Exception e) {
                         player.sendMessage(Main.getInstance().getPrefix() + " §cPositions not set!");
                     }
