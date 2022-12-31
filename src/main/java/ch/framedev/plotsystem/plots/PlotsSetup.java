@@ -20,6 +20,7 @@ import java.util.List;
 
 public class PlotsSetup {
 
+    // Cuboid
     private final Cuboid cuboid;
 
     public PlotsSetup(Cuboid cuboid) {

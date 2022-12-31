@@ -47,6 +47,26 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (args.length == 1) {
             String arg0 = args[0];
+            if(arg0.equalsIgnoreCase("help")) {
+                if (sender.hasPermission("plotsystem.help")) {
+                    List<String> helpMessages = new ArrayList<>();
+                    helpMessages.add("§aUse §6/claim §afor Creating a Plot within two Locations. When LimitedBlocks is enabled you can Only Claim a limited amount of Blocks. \n" +
+                            "To set the Locations use §6/pmarker for setting the Locations!");
+                    helpMessages.add("§aWith the Command §6/plot setowner <PlayerName> §ayou can set the new Owner for the current Plot you stand in! §6You must be the Owner from the Plot!");
+                    helpMessages.add("§aWith the Command §6/plot flag add <Flag Name> §ayou can add a Flag for the current Plot you stand in! §6You must be the Owner from the Plot!");
+                    helpMessages.add("§aWith the Command §6/plot flag remove <Flag Name> §ayou can remove a Flag for the current Plot you stand in! §6You must be the Owner from the Plot!");
+                    helpMessages.add("§aWith the Command §6/plot addmember <PlayerName> §ayou can add a Player as Member to the Current Plot you stand in! §6You must be the Owner from the Plot!");
+                    helpMessages.add("§aWith the Command §6/plot removemember <PlayerName> §ayou can remove a Player as Member to the Current Plot you stand in! §6You must be the Owner from the Plot!");
+                    helpMessages.add("§aWith the Command §6/plot sethome §ayou can set the Home from the Plot you stand in!");
+                    helpMessages.add("§aWith the Command §6/plot home §ayou can Teleport you to the Home from your first plot");
+                    helpMessages.add("§aWith the Command §6/plot sethome <id> §acan be set the Home from the Plot you stand in!");
+                    helpMessages.add("§aWith the Command §6/plot home <Id> §ayou can Teleport you to the Home from the Number!");
+                    helpMessages.add("§aWith the Command §6/plot info §athis list you all Infos about the Plot you stand in!");
+                    for (String message : helpMessages) {
+                        sender.sendMessage(message);
+                    }
+                }
+            }
             if (arg0.equalsIgnoreCase("claim")) {
                 if (sender instanceof Player) {
                     Player player = (Player) sender;
@@ -203,7 +223,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                             return true;
                         }
                         player.teleport(Plot.getPlot(PlotManager.getInstance().getPlotHomes(player).get(Integer.parseInt(args[1]) - 1)).getHome());
-                        int home = Integer.parseInt(args[1]) - 1;
+                        int home = Integer.parseInt(args[1]);
                         player.sendMessage(plugin.getPrefix() + "§aYou have been Teleported to the Home from Plot Number §6" + home);
                     } catch (Exception e) {
                         player.sendMessage(plugin.getPrefix() + "§cPlot Home not found!");

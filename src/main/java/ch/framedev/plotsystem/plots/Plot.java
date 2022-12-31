@@ -218,11 +218,21 @@ public class Plot implements Serializable, ConfigurationSerializable {
         return owners;
     }
 
+    /**
+     * Check if the Location is in the Plot
+     * @param location the Location to check
+     * @return returns if the Location is in the Plot or not
+     */
     public boolean inPlot(Location location) {
         if (this.cuboid == null) throw new NullPointerException("Cuboid is Null");
         return cuboid.contains(location);
     }
 
+    /**
+     * Check if the Player is in a Plot
+     * @param player the Player to check
+     * @return Return if the Player is in a Plot
+     */
     public boolean isPlayerInPlot(Player player) {
         Location location = player.getLocation();
         if (this.cuboid != null)
@@ -238,6 +248,11 @@ public class Plot implements Serializable, ConfigurationSerializable {
         return flags;
     }
 
+    /**
+     * Add new Flag
+     *
+     * @param flag the selected Flag
+     */
     public void addFlag(Flag flag) {
         if (!this.flags.contains(flag)) this.flags.add(flag);
     }
@@ -308,7 +323,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
 
     public void setPrice(double price) {
         this.price = price;
-        addFlag(Flag.SELL);
+        this.addFlag(Flag.SELL);
     }
 
     public double getPrice() {
@@ -324,6 +339,12 @@ public class Plot implements Serializable, ConfigurationSerializable {
         this.home = builder.toString();
     }
 
+    /**
+     * Return the Location as String for serialization
+     *
+     * @param location the selected Location
+     * @return return the Location as String
+     */
     public String locationToString(Location location) {
         StringBuilder builder = new StringBuilder();
         if (location.getWorld() == null) return null;
@@ -333,6 +354,12 @@ public class Plot implements Serializable, ConfigurationSerializable {
         return builder.toString();
     }
 
+    /**
+     * Return the Location from a String
+     *
+     * @param text the Location as String
+     * @return return the Location from the String
+     */
     public Location locationFromString(String text) {
         String[] s = text.split(";");
         World world = Bukkit.getWorld(s[0]);
@@ -388,6 +415,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
                             setPrice(0);
                             setOwner(newOwner.getUniqueId());
                             removeFlag(getFlags().toArray(new Flag[0]));
+                            this.status = PlotStatus.CLAIMED;
                             createPlot();
                             return true;
                         }
@@ -402,6 +430,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
                             setPrice(0);
                             setOwner(newOwner.getUniqueId());
                             removeFlag(getFlags().toArray(new Flag[0]));
+                            this.status = PlotStatus.CLAIMED;
                             createPlot();
                             return true;
                         }
@@ -416,18 +445,18 @@ public class Plot implements Serializable, ConfigurationSerializable {
         if (price != 0) {
             if (Main.getInstance().getVaultManager() != null) {
                 if (owner != null) {
-                        if (hasFlag(Flag.SELL)) {
-                            Main.getInstance().getVaultManager().getEconomy().withdrawPlayer(Bukkit.getOfflinePlayer(owner), price);
-                            owner = null;
-                            owners.clear();
-                            members.clear();
-                            setPrice(price);
-                            setOwner(null);
-                            removeFlag(getFlags().toArray(new Flag[0]));
-                            setStatus(PlotStatus.FOR_SALE);
-                            createPlot();
-                            return true;
-                        }
+                    if (hasFlag(Flag.SELL)) {
+                        Main.getInstance().getVaultManager().getEconomy().withdrawPlayer(Bukkit.getOfflinePlayer(owner), price);
+                        owner = null;
+                        owners.clear();
+                        members.clear();
+                        setPrice(price);
+                        setOwner(null);
+                        removeFlag(getFlags().toArray(new Flag[0]));
+                        setStatus(PlotStatus.FOR_SALE);
+                        createPlot();
+                        return true;
+                    }
                 }
             }
         }

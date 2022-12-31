@@ -21,8 +21,8 @@ public class VaultManager {
     private Economy economy;
 
     public VaultManager() {
-        Bukkit.getConsoleSender().sendMessage(Main.getInstance().getPrefix() + "§aVault Enabled!");
-        setupEconomy();
+        if (setupEconomy())
+            Bukkit.getConsoleSender().sendMessage(Main.getInstance().getPrefix() + "§aVault Enabled!");
     }
 
     private boolean setupEconomy() {

@@ -31,7 +31,7 @@ public final class Main extends JavaPlugin {
     private static Main instance;
     private List<Plot> plots;
 
-    // A List of all Default Flags wich is located in the config.yml
+    // A List of all Default Flags which is located in the config.yml
     private List<String> defaultFlags;
 
     // This is required for the VaultAPI to enable it
@@ -56,6 +56,7 @@ public final class Main extends JavaPlugin {
         // Singleton Init
         instance = this;
 
+        // Load Config and get the Default Config from the Resources
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
         saveDefaultConfigValues();

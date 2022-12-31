@@ -7,9 +7,10 @@ DefaultFlags:
   - REDSTONE
   - FALL_DAMAGE
   - MOB_DAMAGE
+
 PlotWorld: world
 
 # Only works for own Claiming custom Blocks
 MaxBlockClaim:
-  Limited: false
-  Amount: 1250000
+  Limited: true
+  Amount: 12500000
