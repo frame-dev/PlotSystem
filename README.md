@@ -7,3 +7,11 @@ Created by FrameDev<br>
 - More Features
 - Bug Fixes
 - Database
+
+## Build from Source
+
+``` shell
+git clone https://github.com/frame-dev/PlotSystem
+cd PlotSystem
+mvn clean package
+```
