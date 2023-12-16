@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -220,6 +221,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
 
     /**
      * Check if the Location is in the Plot
+     *
      * @param location the Location to check
      * @return returns if the Location is in the Plot or not
      */
@@ -230,6 +232,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
 
     /**
      * Check if the Player is in a Plot
+     *
      * @param player the Player to check
      * @return Return if the Player is in a Plot
      */
@@ -371,6 +374,12 @@ public class Plot implements Serializable, ConfigurationSerializable {
         return new Location(world, x, y, z, yaw, pitch);
     }
 
+    /**
+     * Check if the Player is Owner
+     *
+     * @param player the Player to check if is Owner
+     * @return return if the Player is Owner or not
+     */
     public boolean isOwner(OfflinePlayer player) {
         if (!hasOwner()) return false;
         if (this.hasOwner()) {
@@ -379,6 +388,12 @@ public class Plot implements Serializable, ConfigurationSerializable {
         return false;
     }
 
+    /**
+     * Check if Player is a Member from the Plot
+     *
+     * @param player the Player to check if is a Member
+     * @return return if the Player is a Member of the Plot
+     */
     public boolean isMember(OfflinePlayer player) {
         if (!hasOwner()) return false;
         if (this.hasOwner()) {
@@ -388,11 +403,11 @@ public class Plot implements Serializable, ConfigurationSerializable {
     }
 
     /**
-     * Return Plot Home
+     * Return Plot Home can return null
      *
      * @return return Plot Home Location
      */
-    public Location getHome() {
+    public @Nullable Location getHome() {
         if (home == null) {
             if (cuboid.getCenter().getWorld() == null) return null;
             return null;

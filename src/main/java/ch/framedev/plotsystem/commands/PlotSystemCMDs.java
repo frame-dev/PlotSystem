@@ -1,6 +1,7 @@
 package ch.framedev.plotsystem.commands;
 
 import ch.framedev.plotsystem.main.Main;
+import ch.framedev.plotsystem.plots.Flag;
 import ch.framedev.plotsystem.utils.Utilities;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -8,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -31,6 +33,14 @@ public class PlotSystemCMDs implements CommandExecutor {
             if (args.length == 1 && args[0].equalsIgnoreCase("help")) {
                 if (sender.hasPermission("plotsystem.help")) {
                     new Utilities().sendHelp(sender);
+                }
+            }
+            if (args.length == 1 && args[0].equalsIgnoreCase("flags")) {
+                if (sender.hasPermission("plotsystem.flags.info")) {
+                    List<Flag> flags = new ArrayList<>(Arrays.asList(Flag.values()));
+                    for (Flag flag : flags) {
+                        sender.sendMessage("Flag : " + flag.getType() + ", Description : " + flag.getDescription());
+                    }
                 }
             }
         }

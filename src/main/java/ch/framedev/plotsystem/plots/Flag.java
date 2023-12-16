@@ -12,28 +12,49 @@ import java.util.Objects;
  */
 public enum Flag {
 
-    PVP("PVP"),
-    EXPLOSIONS("EXPLOSIONS"),
-    REDSTONE("REDSTONE"),
-    INTERACT("INTERACT"),
-    DENY_CHAT("DENY_CHAT"),
-    MONSTERS("MONSTERS"),
-    ANIMALS("ANIMALS"),
-    FALL_DAMAGE("FALL_DAMAGE"),
-    MOB_DAMAGE("MOB_DAMAGE"),
-    SELL("SELL"),
-    FARM_PROTECT("FARM_PROTECT"),
-    PLAYERS_BANNED("PLAYERS_BANNED"),
-    MONSTER_SPAWNER("MONSTER_SPAWNER");
+    /**
+     * Flag for PVP on the Plot
+     */
+    PVP("PVP", "PVP in Plot"),
+
+    /**
+     * Flag for enable or Disable Explosions in the Plot
+     */
+    EXPLOSIONS("EXPLOSIONS", "Explosions in Plot"),
+
+    /**
+     * Activate or deactivate Redstone in the Plot
+     */
+    REDSTONE("REDSTONE", "Redstone in Plot"),
+
+    /**
+     * Interact with Chest, Crafting Tables or other Blocks where you can use Right Click
+     */
+    INTERACT("INTERACT", "Interact with Entities in Plot"),
+    DENY_CHAT("DENY_CHAT", "Deny Chat in Plot"),
+    MONSTERS("MONSTERS", "Disable Monsters in Plot"),
+    ANIMALS("ANIMALS", "Disable Animals in Plot"),
+    FALL_DAMAGE("FALL_DAMAGE", "Enable Fall Damage in Plot"),
+    MOB_DAMAGE("MOB_DAMAGE", "Enable Mob Damage in Plot"),
+    SELL("SELL", "Flag to Sell"),
+    FARM_PROTECT("FARM_PROTECT", "Destroy Farms"),
+    PLAYERS_BANNED("PLAYERS_BANNED", "Player Banned"),
+    MONSTER_SPAWNER("MONSTER_SPAWNER", "Enable Monster Spawner");
 
     private final String type;
+    private final String description;
 
-    Flag(String type) {
+    Flag(String type, String description) {
         this.type = type;
+        this.description = description;
     }
 
     public String getType() {
         return type;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public static Flag getFlag(String type) {

@@ -1,14 +1,17 @@
 Created by FrameDev<br>
 [Website](https://framedev.ch)
 
-# TODO
+Vault Required for the Sell and Buy options
+
+### TODO
+
 - API Documentation
 - Java Documentation
 - More Features
 - Bug Fixes
 - Database
 
-## Build from Source
+### Build from Source
 
 ``` shell
 git clone https://github.com/frame-dev/PlotSystem
