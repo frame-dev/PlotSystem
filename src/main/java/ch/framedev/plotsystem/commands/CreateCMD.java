@@ -210,9 +210,7 @@ public class CreateCMD implements CommandExecutor, Listener {
                 }
             }
         }
-        if (command.getName().
-
-                equalsIgnoreCase("pmarker")) {
+        if (command.getName().equalsIgnoreCase("pmarker")) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 if (!player.hasPermission("plotsystem.plot.marker")) {
@@ -228,9 +226,7 @@ public class CreateCMD implements CommandExecutor, Listener {
                         "Right Click on a Block set's the Second Location! Or yust use /pos1 /pos2");
             }
         }
-        if (command.getName().
-
-                equalsIgnoreCase("pos1")) {
+        if (command.getName().equalsIgnoreCase("pos1")) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 if (locations.isEmpty()) {
@@ -254,9 +250,7 @@ public class CreateCMD implements CommandExecutor, Listener {
                 player.sendMessage("§aPosition 1 Set!");
             }
         }
-        if (command.getName().
-
-                equalsIgnoreCase("pos2")) {
+        if (command.getName().equalsIgnoreCase("pos2")) {
             if (sender instanceof Player) {
                 Player player = (Player) sender;
                 if (locations.isEmpty()) {
@@ -290,6 +284,7 @@ public class CreateCMD implements CommandExecutor, Listener {
             if (!event.getItem().getItemMeta().hasDisplayName()) return;
             if (event.getItem().getItemMeta().getDisplayName().equalsIgnoreCase("§aMarker")) {
                 Player player = event.getPlayer();
+                if(event.getClickedBlock() == null) return;
                 if (event.getAction() == Action.LEFT_CLICK_BLOCK) {
                     if (locations.isEmpty()) {
                         Location location = event.getClickedBlock().getLocation();

@@ -189,6 +189,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                         if (plot.isOwner(player)) {
                             plot.setHome(player.getLocation());
                             plot.createPlot();
+                            player.sendMessage("Plot Home Created! ID : " + plot.getId());
                         }
                     }
                 }
@@ -218,15 +219,19 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                 if (sender instanceof Player) {
                     Player player = (Player) sender;
                     try {
-                        if (!PlotManager.getInstance().getPlotHomes(player).isEmpty() && PlotManager.getInstance().getPlotHomes(player).size() > 0 && Plot.getPlot(PlotManager.getInstance().getPlotHomes(player).get(Integer.parseInt(args[1]) - 1)) == null) {
+                        if (!PlotManager.getInstance().getPlotHomes(player).isEmpty() && PlotManager.getInstance().getPlotHomes(player).size() > 0 && PlotManager.getInstance().getPlotHomeByID(player, Integer.parseInt(args[1])) == null) {
                             System.out.println("plot is null");
                             return true;
                         }
-                        player.teleport(Plot.getPlot(PlotManager.getInstance().getPlotHomes(player).get(Integer.parseInt(args[1]) - 1)).getHome());
+                        player.teleport(PlotManager.getInstance().getPlotHomeByID(player,Integer.parseInt(args[1])).getHome());
                         int home = Integer.parseInt(args[1]);
                         player.sendMessage(plugin.getPrefix() + "§aYou have been Teleported to the Home from Plot Number §6" + home);
                     } catch (Exception e) {
+                        e.printStackTrace();
                         player.sendMessage(plugin.getPrefix() + "§cPlot Home not found!");
+                        System.out.println(PlotManager.getInstance().getPlotHomes(player));
+                        System.out.println(PlotManager.getInstance().getPlotHomesMap(player).toString());
+                        System.out.println(PlotManager.getInstance().getPlotHomeByID(player, Integer.parseInt(args[1])));
                         return true;
                     }
                 }
@@ -431,11 +436,11 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                     }
                     OfflinePlayer offPlayer = Bukkit.getOfflinePlayer(args[1]);
                     try {
-                        if (!PlotManager.getInstance().getPlotHomes(offPlayer).isEmpty() && PlotManager.getInstance().getPlotHomes(offPlayer).size() > 0 && Plot.getPlot(PlotManager.getInstance().getPlotHomes(offPlayer).get(Integer.parseInt(args[2]) - 1)) == null) {
+                        if (!PlotManager.getInstance().getPlotHomes(offPlayer).isEmpty() && PlotManager.getInstance().getPlotHomes(offPlayer).size() > 0 && PlotManager.getInstance().getPlotHomeByID(offPlayer, Integer.parseInt(args[2])) == null) {
                             System.out.println("plot is null");
                             return true;
                         }
-                        player.teleport(Plot.getPlot(PlotManager.getInstance().getPlotHomes(offPlayer).get(Integer.parseInt(args[2]) - 1)).getHome());
+                        player.teleport(PlotManager.getInstance().getPlotHomeByID(offPlayer, Integer.parseInt(args[2])).getHome());
                     } catch (IndexOutOfBoundsException e) {
                         player.sendMessage(plugin.getPrefix() + "§cPlot Home not found!");
                         return true;

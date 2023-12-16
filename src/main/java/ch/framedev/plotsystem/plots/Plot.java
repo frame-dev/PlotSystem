@@ -550,6 +550,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
         for (Plot plot : getPlots()) {
             if (plot.getId() == id) return plot;
         }
+        System.out.println("null");
         return null;
     }
 
