@@ -113,3 +113,4 @@ buildNumber.properties
 run/
 /.vscode/
 *.sh
+write.sh
