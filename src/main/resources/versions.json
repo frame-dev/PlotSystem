@@ -1,7 +1,8 @@
 {
-  "latest": "1.2-OPEN-BETA",
+  "latest": "1.2.1-OPEN-BETA",
   "versions": [
     "1.1-OPEN-BETA",
-    "1.2-OPEN-BETA"
+    "1.2-OPEN-BETA",
+    "1.2.1-OPEN-BETA"
   ]
 }

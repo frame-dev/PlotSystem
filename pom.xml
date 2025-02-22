@@ -6,7 +6,7 @@
 
     <groupId>ch.framedev</groupId>
     <artifactId>PlotSystem</artifactId>
-    <version>1.2-OPEN-BETA</version>
+    <version>1.2.1-OPEN-BETA</version>
     <packaging>jar</packaging>
 
     <name>PlotSystem</name>
@@ -185,6 +185,12 @@
             <groupId>ch.framedev</groupId>
             <artifactId>SpigotSQLiteUtils</artifactId>
             <version>1.0.4.2-TEST-RELEASE</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.framedev</groupId>
+            <artifactId>SpigotMongoDBUtils</artifactId>
+            <version>1.0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

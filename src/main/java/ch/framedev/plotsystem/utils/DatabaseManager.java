@@ -7,6 +7,7 @@ public class DatabaseManager {
     private static String tableName;
     private boolean sql;
     private boolean mysql;
+    private boolean mongoDb;
     private IDatabase iDatabase;
 
     public DatabaseManager(Main plugin) {
@@ -15,9 +16,10 @@ public class DatabaseManager {
 
         mysql = plugin.getServer().getPluginManager().getPlugin("SpigotMySQLUtils") != null;
         sql = plugin.getServer().getPluginManager().getPlugin("SpigotSQLiteUtils") != null;
+        mongoDb = plugin.getServer().getPluginManager().getPlugin("SpigotMongoDBUtils")!= null;
 
         // Determine preferred database if both are available
-        if (mysql && sql) {
+        if (mysql && sql && mongoDb) {
             String preferred = plugin.getConfig().getString("database.preferred", "mysql").toLowerCase();
 
             switch (preferred) {
@@ -36,6 +38,8 @@ public class DatabaseManager {
             iDatabase = new MySQLManager();
         } else if (sql) {
             iDatabase = new SQLiteManager();
+        } else if(mongoDb) {
+            iDatabase = new MongoManager();
         } else {
             iDatabase = null;
             plugin.getLogger().warning("⚠ No supported database found! The plugin may not work correctly.");
@@ -61,7 +65,11 @@ public class DatabaseManager {
     public boolean isDatabaseSupported() {
         if(!Main.getInstance().getConfig().getBoolean("database.use"))
             return false;
-        return mysql || sql;
+        return mysql || sql || mongoDb;
+    }
+
+    public boolean isMongoDb() {
+        return mongoDb;
     }
 
     public boolean isMysql() {

@@ -9,6 +9,7 @@ softdepend:
   - Vault
   - SpigotMySQLUtils
   - SpigotSQLiteUtils
+  - SpigotMongoDBUtils
 
 commands:
   create:

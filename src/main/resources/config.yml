@@ -42,3 +42,10 @@ database:
   sqlite:
     database: "plot.db"
     path: "plugins/PlotSystem"  # Ensure this points to a valid directory
+
+  mongodb:
+    host: "localhost"
+    port: 27017
+    database: "database"
+    username: "username"  # Renamed from 'user' to match code
+    password: "password"
