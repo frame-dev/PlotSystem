@@ -1,16 +1,44 @@
+# Prefix for plugin messages
 Prefix: '&6[&aPlot&bSystem&6] &c>> &7'
 
+# Minimum number of plots a player can lower
 MaxLower: 0
+
+# Whether players receive titles when claiming plots
 Title: false
 
+# Default flags applied to every new plot
 DefaultFlags:
   - REDSTONE
   - FALL_DAMAGE
   - MOB_DAMAGE
 
+# The default world where plots are created
 PlotWorld: world
 
-# Only works for own Claiming custom Blocks
+# Maximum number of custom blocks a player can claim
 MaxBlockClaim:
   Limited: true
   Amount: 12500000
+
+# Database settings
+database:
+  use: false
+  # Table name used for storing plots
+  tableName: "plotsystem_data"
+
+  # Choose which database to use (accepted values: "mysql" or "sqlite")
+  preferred: "mysql"
+
+  # MySQL database settings
+  mysql:
+    host: "localhost"
+    port: 3306
+    database: "database"
+    user: "root"  # Renamed from 'username' to match code
+    password: "password"
+
+  # SQLite database settings
+  sqlite:
+    database: "plot.db"
+    path: "plugins/PlotSystem"  # Ensure this points to a valid directory

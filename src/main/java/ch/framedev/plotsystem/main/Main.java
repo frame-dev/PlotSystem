@@ -9,6 +9,7 @@ import ch.framedev.plotsystem.plots.Plot;
 import ch.framedev.plotsystem.plots.PlotManager;
 import ch.framedev.plotsystem.utils.Cuboid;
 import ch.framedev.plotsystem.utils.DatabaseManager;
+import ch.framedev.plotsystem.utils.IDatabase;
 import ch.framedev.plotsystem.utils.VaultManager;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
 
 public final class Main extends JavaPlugin {
 
@@ -46,9 +48,11 @@ public final class Main extends JavaPlugin {
     private HashMap<Player, Long> limitedHashMap;
     private long updateTime;
 
+    private PlotListeners plotListeners;
+
     @Override
     public void onLoad() {
-
+        Bukkit.getConsoleSender().sendMessage("§6PlotSystem Loaded!");
     }
 
     @Override
@@ -79,7 +83,7 @@ public final class Main extends JavaPlugin {
         new PlotSystemCMDs(this);
 
         // Listeners
-        new PlotListeners(this);
+        this.plotListeners = new PlotListeners(this);
         new PlayerListeners(this);
 
 
@@ -103,11 +107,7 @@ public final class Main extends JavaPlugin {
                 if (getServer().getPluginManager().getPlugin("Vault") != null) {
                     vaultManager = new VaultManager();
                 }
-                /**if (getServer().getPluginManager().getPlugin("MySQLAPI") != null) {
-                    databaseManager = new DatabaseManager(instance);
-                    sql = databaseManager.isSql();
-                    mysql = databaseManager.isMysql();
-                }*/
+                databaseManager = new DatabaseManager(Main.getInstance());
             }
         }.runTaskLater(this, 4 * 20);
 
@@ -125,7 +125,33 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if(!this.plotListeners.getTask().isCancelled()) {
+            this.plotListeners.getTask().cancel();
+        }
+        this.plots.clear();
+        this.defaultFlags.clear();
+        this.limitedHashMap.clear();
+        this.limitedClaim = false;
+        this.limitedAmount = 0;
+        this.updateTime = 0;
+        this.vaultManager = null;
+        this.databaseManager = null;
+        this.mysql = false;
+        this.sql = false;
+        instance = null;
         Bukkit.getConsoleSender().sendMessage(getPrefix() + "§cPlotSystem Disabled!! Bye...");
+    }
+
+    public boolean isDatabaseSupported() {
+        if(!getConfig().getBoolean("database.use"))
+            return false;
+        if(databaseManager == null) return false;
+        return databaseManager.isDatabaseSupported();
+    }
+
+    public IDatabase getIDatabase() {
+        if(isDatabaseSupported()) return databaseManager.getIDatabase();
+        return null;
     }
 
     public List<String> getDefaultFlags() {
@@ -209,7 +235,7 @@ public final class Main extends JavaPlugin {
             bufferedWriter.flush();
             bufferedWriter.close();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            this.getLogger().log(Level.SEVERE, "Error while writing permissions.txt", ex);
         }
     }
 

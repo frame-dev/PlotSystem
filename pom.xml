@@ -6,13 +6,13 @@
 
     <groupId>ch.framedev</groupId>
     <artifactId>PlotSystem</artifactId>
-    <version>1.1-OPEN-BETA</version>
+    <version>1.2-OPEN-BETA</version>
     <packaging>jar</packaging>
 
     <name>PlotSystem</name>
 
     <properties>
-        <repo.name>pre-releases</repo.name>
+        <repo.name>Open-Betas</repo.name>
         <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -21,8 +21,8 @@
 
     <distributionManagement>
         <repository>
-            <id>repository</id>
-            <url>https://framedev.ch:444/${repo.name}</url>
+            <id>framedev-repository</id>
+            <url>https://repository.framedev.ch:444/${repo.name}</url>
         </repository>
     </distributionManagement>
 
@@ -142,7 +142,7 @@
         </repository>
         <repository>
             <id>local</id>
-            <url>https://framedev.ch:444/releases</url>
+            <url>https://repository.framedev.ch:444/releases</url>
         </repository>
         <repository>
             <id>jitpack.io</id>
@@ -151,6 +151,12 @@
     </repositories>
 
     <dependencies>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.11.0</version>
+            <scope>compile</scope>
+        </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
@@ -170,9 +176,15 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>de.framedev</groupId>
-            <artifactId>MySQLAPI</artifactId>
-            <version>1.1.1-RELEASE</version>
+            <groupId>ch.framedev</groupId>
+            <artifactId>SpigotMySQLUtils</artifactId>
+            <version>1.0.4.2-TEST-RELEASE</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.framedev</groupId>
+            <artifactId>SpigotSQLiteUtils</artifactId>
+            <version>1.0.4.2-TEST-RELEASE</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

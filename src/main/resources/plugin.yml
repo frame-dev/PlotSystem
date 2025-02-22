@@ -7,7 +7,8 @@ authors: [ FrameDev ]
 website: https://framedev.ch
 softdepend:
   - Vault
-  - MySQLAPI
+  - SpigotMySQLUtils
+  - SpigotSQLiteUtils
 
 commands:
   create:

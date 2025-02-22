@@ -29,7 +29,7 @@ public class Cuboid implements Serializable, Iterable<Block>, Cloneable, Configu
      * @param l2 - The other corner
      */
     public Cuboid(Location l1, Location l2) {
-        if (!l1.getWorld().equals(l2.getWorld()))
+        if (!Objects.equals(l1.getWorld(), l2.getWorld()))
             throw new IllegalArgumentException("Locations must be on the same world");
         this.worldName = l1.getWorld().getName();
         this.x1 = Math.min(l1.getBlockX(), l2.getBlockX());
@@ -164,7 +164,7 @@ public class Cuboid implements Serializable, Iterable<Block>, Cloneable, Configu
     }
 
     /**
-     * Get the the centre of the Cuboid.
+     * Get the centre of the Cuboid.
      *
      * @return Location at the centre of the Cuboid
      */
@@ -564,7 +564,7 @@ public class Cuboid implements Serializable, Iterable<Block>, Cloneable, Configu
      * @return A list of Chunk objects
      */
     public List<Chunk> getChunks() {
-        List<Chunk> res = new ArrayList<Chunk>();
+        List<Chunk> res = new ArrayList<>();
 
         World w = this.getWorld();
         int x1 = this.getLowerX() & ~0xf;
@@ -585,7 +585,7 @@ public class Cuboid implements Serializable, Iterable<Block>, Cloneable, Configu
         }
     }
 
-    public Iterator<Block> iterator() {
+    public @NotNull Iterator<Block> iterator() {
         return new CuboidIterator(this.getWorld(), this.x1, this.y1, this.z1, this.x2, this.y2, this.z2);
     }
 

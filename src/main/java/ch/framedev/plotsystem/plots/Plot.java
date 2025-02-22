@@ -31,15 +31,20 @@ public class Plot implements Serializable, ConfigurationSerializable {
 
     // Required for the Plot to be found
     private int id;
+
     private UUID owner;
     private List<UUID> owners;
+
     // Required for the Plot
     private Cuboid cuboid;
+
     private List<Flag> flags;
     private List<UUID> bannedPlayers;
     private List<UUID> members;
+
     private String home;
     private double price = 0;
+
     private PlotStatus status;
 
     public Plot(int id, Location location1, Location location2) {
@@ -211,7 +216,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
     }
 
     public void setOwners(List<UUID> owners) {
-        if (owners.size() >= 1) this.owner = owners.get(0);
+        if (!owners.isEmpty()) this.owner = owners.get(0);
         this.owners = owners;
     }
 
@@ -299,7 +304,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
 
     public void removeBannedPlayer(UUID uuid) {
         bannedPlayers.remove(uuid);
-        if (bannedPlayers.size() == 0)
+        if (bannedPlayers.isEmpty())
             if (hasFlag(Flag.PLAYERS_BANNED))
                 removeFlag(Flag.PLAYERS_BANNED);
     }
@@ -349,6 +354,10 @@ public class Plot implements Serializable, ConfigurationSerializable {
      * @return return the Location as String
      */
     public String locationToString(Location location) {
+        return getString(location);
+    }
+
+    private static @Nullable String getString(Location location) {
         StringBuilder builder = new StringBuilder();
         if (location.getWorld() == null) return null;
         builder.append(location.getWorld().getName())
@@ -364,6 +373,10 @@ public class Plot implements Serializable, ConfigurationSerializable {
      * @return return the Location from the String
      */
     public Location locationFromString(String text) {
+        return getLocation(text);
+    }
+
+    private static @NotNull Location getLocation(String text) {
         String[] s = text.split(";");
         World world = Bukkit.getWorld(s[0]);
         int x = Integer.parseInt(s[1]);
@@ -514,33 +527,45 @@ public class Plot implements Serializable, ConfigurationSerializable {
     }
 
     public void createPlot() {
-        File fileCfg = new File(Main.getInstance().getDataFolder(), "plots.yml");
-        FileConfiguration cfg = YamlConfiguration.loadConfiguration(fileCfg);
-        List<Plot> plots = new ArrayList<>();
-        if (!Main.getInstance().getDefaultFlags().isEmpty())
-            for (String s : Main.getInstance().getDefaultFlags()) {
-                if (s != null && this.getFlags().isEmpty())
-                    this.addFlag(Flag.getFlag(s));
+        if(Main.getInstance().isDatabaseSupported()) {
+            if(Main.getInstance().getIDatabase() == null) {
+                Main.getInstance().getLogger().severe("Database not initialized!");
+                return;
             }
-        if (!cfg.contains("Plots")) {
-            plots.add(this);
-            cfg.set("Plots", plots);
-            try {
-                cfg.save(fileCfg);
-            } catch (IOException e) {
-                e.printStackTrace();
+            if(Main.getInstance().getIDatabase().existsPlot(id)) {
+                Main.getInstance().getIDatabase().updatePlot(this);
+            } else {
+                Main.getInstance().getIDatabase().insertPlot(this);
             }
         } else {
-            //noinspection unchecked
-            plots = (List<Plot>) cfg.getList("Plots");
-            if (plots == null) return;
-            plots.removeIf(plot -> plot.id == this.id);
-            plots.add(this);
-            cfg.set("Plots", plots);
-            try {
-                cfg.save(fileCfg);
-            } catch (IOException e) {
-                e.printStackTrace();
+            File fileCfg = new File(Main.getInstance().getDataFolder(), "plots.yml");
+            FileConfiguration cfg = YamlConfiguration.loadConfiguration(fileCfg);
+            List<Plot> plots = new ArrayList<>();
+            if (!Main.getInstance().getDefaultFlags().isEmpty())
+                for (String s : Main.getInstance().getDefaultFlags()) {
+                    if (s != null && this.getFlags().isEmpty())
+                        this.addFlag(Flag.getFlag(s));
+                }
+            if (!cfg.contains("Plots")) {
+                plots.add(this);
+                cfg.set("Plots", plots);
+                try {
+                    cfg.save(fileCfg);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                //noinspection unchecked
+                plots = (List<Plot>) cfg.getList("Plots");
+                if (plots == null) return;
+                plots.removeIf(plot -> plot.id == this.id);
+                plots.add(this);
+                cfg.set("Plots", plots);
+                try {
+                    cfg.save(fileCfg);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
@@ -562,12 +587,21 @@ public class Plot implements Serializable, ConfigurationSerializable {
     }
 
     public static List<Plot> getPlots() {
-        File fileCfg = new File(Main.getInstance().getDataFolder(), "plots.yml");
-        FileConfiguration cfg = YamlConfiguration.loadConfiguration(fileCfg);
-        if (cfg.contains("Plots"))
-            //noinspection unchecked
-            return (List<Plot>) cfg.getList("Plots");
-        return null;
+        if(Main.getInstance().isDatabaseSupported()) {
+            if(Main.getInstance().getIDatabase() == null) {
+                Main.getInstance().getLogger().severe("Database not initialized!");
+                return null;
+            }
+            List<Plot> plots = Main.getInstance().getIDatabase().getPlots();
+            return plots.isEmpty() ? null : plots;
+        } else {
+            File fileCfg = new File(Main.getInstance().getDataFolder(), "plots.yml");
+            FileConfiguration cfg = YamlConfiguration.loadConfiguration(fileCfg);
+            if (cfg.contains("Plots"))
+                //noinspection unchecked
+                return (List<Plot>) cfg.getList("Plots");
+            return null;
+        }
     }
 
     public static boolean isPlayerInPlotStatic(Player player) {

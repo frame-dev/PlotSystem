@@ -34,7 +34,7 @@ public class VaultManager {
             return false;
         }
         economy = rsp.getProvider();
-        return economy != null;
+        return true;
     }
 
     public Economy getEconomy() {

@@ -22,6 +22,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,9 +42,15 @@ import java.util.UUID;
 
 public class PlotListeners implements Listener {
 
+    private BukkitTask task;
+
     public PlotListeners(Main plugin) {
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         onUpdate();
+    }
+
+    public BukkitTask getTask() {
+        return task;
     }
 
     /**
@@ -204,38 +211,36 @@ public class PlotListeners implements Listener {
                 Plot plot = Plot.getPlot(player.getEyeLocation());
                 if (plot == null) return;
                 if (plot.hasOwner()) {
-                    if (plot.getOwners() != null && !plot.getOwners().contains(event.getPlayer().getUniqueId()))
-                        if (plot.getMembers() == null) {
-                            if (!plot.hasFlag(Flag.INTERACT))
-                                if (!event.getPlayer().hasPermission("plotsystem.admin.interact"))
-                                    event.setCancelled(true);
-                        } else if (!plot.getMembers().contains(event.getPlayer().getUniqueId())) {
-                            if (!plot.hasFlag(Flag.INTERACT))
-                                if (!event.getPlayer().hasPermission("plotsystem.admin.interact"))
-                                    event.setCancelled(true);
-                        }
-                } else {
-                    if (!event.getPlayer().hasPermission("plotsystem.admin.interact"))
+                    UUID playerUUID = event.getPlayer().getUniqueId();
+
+                    boolean isOwner = plot.getOwners() != null && plot.getOwners().contains(playerUUID);
+                    boolean isMember = plot.getMembers() != null && plot.getMembers().contains(playerUUID);
+
+                    if (!isOwner && !isMember && !plot.hasFlag(Flag.INTERACT) && !event.getPlayer().hasPermission("plotsystem.admin.interact")) {
                         event.setCancelled(true);
+                    }
+                } else {
+                    if (!event.getPlayer().hasPermission("plotsystem.admin.interact")) {
+                        event.setCancelled(true);
+                    }
                 }
             }
         } else if (Plot.isLocationInPlot(event.getClickedBlock().getLocation())) {
             Plot plot = Plot.getPlot(event.getClickedBlock().getLocation());
             if (plot == null) return;
             if (plot.hasOwner()) {
-                if (plot.getOwners() != null && !plot.getOwners().contains(event.getPlayer().getUniqueId()))
-                    if (plot.getMembers() == null) {
-                        if (!plot.hasFlag(Flag.INTERACT))
-                            if (!event.getPlayer().hasPermission("plotsystem.admin.interact"))
-                                event.setCancelled(true);
-                    } else if (!plot.getMembers().contains(event.getPlayer().getUniqueId())) {
-                        if (!plot.hasFlag(Flag.INTERACT))
-                            if (!event.getPlayer().hasPermission("plotsystem.admin.interact"))
-                                event.setCancelled(true);
-                    }
-            } else {
-                if (!event.getPlayer().hasPermission("plotsystem.admin.interact"))
+                UUID playerUUID = event.getPlayer().getUniqueId();
+
+                boolean isOwner = plot.getOwners() != null && plot.getOwners().contains(playerUUID);
+                boolean isMember = plot.getMembers() != null && plot.getMembers().contains(playerUUID);
+
+                if (!isOwner && !isMember && !plot.hasFlag(Flag.INTERACT) && !event.getPlayer().hasPermission("plotsystem.admin.interact")) {
                     event.setCancelled(true);
+                }
+            } else {
+                if (!event.getPlayer().hasPermission("plotsystem.admin.interact")) {
+                    event.setCancelled(true);
+                }
             }
         }
     }
@@ -307,6 +312,8 @@ public class PlotListeners implements Listener {
         return blocks;
     }
 
+    private final List<Player> playersInPlot = new ArrayList<>();
+
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         if (Plot.isPlayerInPlotStatic(event.getPlayer())) {
@@ -366,7 +373,7 @@ public class PlotListeners implements Listener {
      * This despawns the entities if they not allowed
      */
     public void onUpdate() {
-        new BukkitRunnable() {
+        task = new BukkitRunnable() {
             @Override
             public void run() {
                 for (Entity entity : Bukkit.getWorld(Objects.requireNonNull(Main.getInstance().getConfig().getString("PlotWorld"))).getEntities()) {

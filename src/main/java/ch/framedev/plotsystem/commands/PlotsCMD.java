@@ -227,11 +227,7 @@ public class PlotsCMD implements CommandExecutor, TabCompleter {
                         int home = Integer.parseInt(args[1]);
                         player.sendMessage(plugin.getPrefix() + "§aYou have been Teleported to the Home from Plot Number §6" + home);
                     } catch (Exception e) {
-                        e.printStackTrace();
                         player.sendMessage(plugin.getPrefix() + "§cPlot Home not found!");
-                        System.out.println(PlotManager.getInstance().getPlotHomes(player));
-                        System.out.println(PlotManager.getInstance().getPlotHomesMap(player).toString());
-                        System.out.println(PlotManager.getInstance().getPlotHomeByID(player, Integer.parseInt(args[1])));
                         return true;
                     }
                 }
