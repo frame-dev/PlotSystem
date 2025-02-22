@@ -35,6 +35,7 @@ public class PlotsSetup {
      * Create Plots in all Selected Chunks
      *
      * @param startId Start Plot ID, increases every new Plot
+     * @throws Exception if an error occurs
      */
     public void createFromChunks(int startId) throws Exception {
         if(cuboid == null) throw new Exception("Cuboid is Null");

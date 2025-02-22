@@ -267,7 +267,7 @@ public class PlotListeners implements Listener {
     /**
      * Protect Explosions when in Plot and has not Flag "EXPLOSION"
      *
-     * @param event
+     * @param event the event
      */
     @EventHandler
     public void onExplode(ExplosionPrimeEvent event) {
