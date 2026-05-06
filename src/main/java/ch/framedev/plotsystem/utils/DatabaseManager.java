@@ -2,6 +2,11 @@ package ch.framedev.plotsystem.utils;
 
 import ch.framedev.plotsystem.main.Main;
 
+import java.util.Locale;
+import java.util.function.Supplier;
+import java.util.logging.Level;
+
+@SuppressWarnings("unused")
 public class DatabaseManager {
 
     private static String tableName;
@@ -14,44 +19,53 @@ public class DatabaseManager {
         if(!plugin.getConfig().getBoolean("database.use"))
             return;
 
-        mysql = plugin.getServer().getPluginManager().getPlugin("SpigotMySQLUtils") != null;
-        sql = plugin.getServer().getPluginManager().getPlugin("SpigotSQLiteUtils") != null;
-        mongoDb = plugin.getServer().getPluginManager().getPlugin("SpigotMongoDBUtils")!= null;
-
-        // Determine preferred database if both are available
-        if (mysql && sql && mongoDb) {
-            String preferred = plugin.getConfig().getString("database.preferred", "mysql").toLowerCase();
-
-            switch (preferred) {
-                case "mysql":
-                    iDatabase = new MySQLManager();
-                    break;
-                case "sqlite":
-                    iDatabase = new SQLiteManager();
-                    break;
-                default:
-                    plugin.getLogger().warning("⚠ Invalid database preference: '" + preferred + "'. Falling back to MySQL.");
-                    iDatabase = new MySQLManager();
-                    break;
-            }
-        } else if (mysql) {
-            iDatabase = new MySQLManager();
-        } else if (sql) {
-            iDatabase = new SQLiteManager();
-        } else if(mongoDb) {
-            iDatabase = new MongoManager();
-        } else {
-            iDatabase = null;
-            plugin.getLogger().warning("⚠ No supported database found! The plugin may not work correctly.");
-        }
-
-        // Ensure a valid table name is present
         String configTableName = plugin.getConfig().getString("database.tableName", "plotsystem_data");
         if (configTableName.trim().isEmpty()) {
             plugin.getLogger().warning("⚠ No table name found in config.yml. Using default: 'plotsystem_data'");
             configTableName = "plotsystem_data";
         }
+        if (!configTableName.matches("[A-Za-z0-9_]+")) {
+            plugin.getLogger().warning("Invalid database table name '" + configTableName + "'. Using default: 'plotsystem_data'");
+            configTableName = "plotsystem_data";
+        }
         tableName = configTableName;
+
+        mysql = isClassAvailable("com.mysql.cj.jdbc.Driver");
+        sql = isClassAvailable("org.sqlite.JDBC");
+        mongoDb = isClassAvailable("com.mongodb.client.MongoClients");
+
+        String preferred = plugin.getConfig().getString("database.preferred", "mysql").toLowerCase(Locale.ROOT);
+        switch (preferred) {
+            case "mysql":
+                iDatabase = createDatabase(plugin, "MySQL", mysql, MySQLManager::new);
+                break;
+            case "sqlite":
+                iDatabase = createDatabase(plugin, "SQLite", sql, SQLiteManager::new);
+                break;
+            case "mongodb":
+            case "mongo":
+                iDatabase = createDatabase(plugin, "MongoDB", mongoDb, MongoManager::new);
+                break;
+            default:
+                plugin.getLogger().warning("Invalid database preference: '" + preferred + "'. Falling back to the first available database.");
+                break;
+        }
+
+        if (iDatabase == null && mysql) {
+            iDatabase = createDatabase(plugin, "MySQL", true, MySQLManager::new);
+        }
+        if (iDatabase == null && sql) {
+            iDatabase = createDatabase(plugin, "SQLite", true, SQLiteManager::new);
+        }
+        if (iDatabase == null && mongoDb) {
+            iDatabase = createDatabase(plugin, "MongoDB", true, MongoManager::new);
+        }
+
+        if (iDatabase == null) {
+            plugin.getLogger().warning("⚠ No supported database found! The plugin may not work correctly.");
+        } else {
+            iDatabase.createTable();
+        }
     }
 
     public static String getTableName() {
@@ -65,7 +79,7 @@ public class DatabaseManager {
     public boolean isDatabaseSupported() {
         if(!Main.getInstance().getConfig().getBoolean("database.use"))
             return false;
-        return mysql || sql || mongoDb;
+        return iDatabase != null;
     }
 
     public boolean isMongoDb() {
@@ -78,5 +92,27 @@ public class DatabaseManager {
 
     public boolean isSql() {
         return sql;
+    }
+
+    private boolean isClassAvailable(String className) {
+        try {
+            Class.forName(className);
+            return true;
+        } catch (ClassNotFoundException ignored) {
+            return false;
+        }
+    }
+
+    private IDatabase createDatabase(Main plugin, String databaseName, boolean available, Supplier<IDatabase> supplier) {
+        if (!available) {
+            plugin.getLogger().warning(databaseName + " driver is not available.");
+            return null;
+        }
+        try {
+            return supplier.get();
+        } catch (RuntimeException ex) {
+            plugin.getLogger().log(Level.WARNING, "Could not initialize " + databaseName + " backend.", ex);
+            return null;
+        }
     }
 }

@@ -48,7 +48,9 @@ public class PlotsSetup {
         }
         for(Plot plot : plots) {
             for (Block corner : plot.getCuboid().corners()) {
-                corner.getWorld().getHighestBlockAt(corner.getLocation()).getLocation().add(0,1,0).getBlock().setType(Material.GLOWSTONE);
+                if (corner.getWorld() != null) {
+                    corner.getWorld().getHighestBlockAt(corner.getLocation()).getLocation().add(0,1,0).getBlock().setType(Material.GLOWSTONE);
+                }
             }
             plot.createPlot();
         }

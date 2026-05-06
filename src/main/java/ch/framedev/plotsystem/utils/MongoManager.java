@@ -11,21 +11,30 @@ package ch.framedev.plotsystem.utils;
  * This Class was created at 22.02.2025 18:19
  */
 
-import ch.framedev.javamongodbutils.BackendMongoDBManager;
-import ch.framedev.javamongodbutils.MongoDBManager;
 import ch.framedev.plotsystem.main.Main;
 import ch.framedev.plotsystem.plots.Plot;
+import com.google.gson.Gson;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.ReplaceOptions;
 import org.bson.Document;
 import org.bukkit.configuration.ConfigurationSection;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ArrayList;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.stream.Collectors;
+
+import static com.mongodb.client.model.Filters.eq;
 
 public class MongoManager implements IDatabase {
 
-    private final BackendMongoDBManager bMongoDBManager;
+    private final MongoClient mongoClient;
+    private final MongoCollection<Document> collection;
+    private final Gson gson = new Gson();
 
     public MongoManager() {
         ConfigurationSection section = Main.getInstance().getConfig().getConfigurationSection("database.mongodb");
@@ -39,53 +48,70 @@ public class MongoManager implements IDatabase {
         String username = section.getString("username", "username");
         String password = section.getString("password", "password");
         String database = section.getString("database", "plotsystem");
-        MongoDBManager mongoDBManager = new MongoDBManager(host, username, password, port, database);
-        mongoDBManager.connect();
-        bMongoDBManager = new BackendMongoDBManager(mongoDBManager);
+        String uri = buildConnectionUri(host, port, username, password, database);
+        this.mongoClient = MongoClients.create(uri);
+        this.collection = mongoClient.getDatabase(database).getCollection(DatabaseManager.getTableName());
     }
 
     @Override
     public void createTable() {
-        // not supported
+        // MongoDB creates the collection lazily when the first plot is stored.
     }
 
     @Override
     public void insertPlot(Plot plot) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("plotId", plot.getId());
-        map.put("plot", plot.serialize());
-        bMongoDBManager.createData("plotId", plot.getId(), map, DatabaseManager.getTableName());
+        collection.insertOne(toDocument(plot));
     }
 
     @Override
     public void updatePlot(Plot plot) {
         if(!existsPlot(plot.getId())) return;
-        Map<String, Object> map = new HashMap<>();
-        map.put("plotId", plot.getId());
-        map.put("plot", plot.serialize());
-        bMongoDBManager.updateAll("plotId", plot.getId(), map, DatabaseManager.getTableName());
+        collection.replaceOne(eq("plotId", plot.getId()), toDocument(plot), new ReplaceOptions().upsert(true));
     }
 
     @Override
     public boolean existsPlot(int plotId) {
-        return bMongoDBManager.exists("plotId", plotId, DatabaseManager.getTableName());
+        return collection.find(eq("plotId", plotId)).first() != null;
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public Plot getPlotById(int id) {
-        return Plot.deserialize((Map<String, Object>) bMongoDBManager.getObject("plotId", id, "plot",DatabaseManager.getTableName()));
+        Document document = collection.find(eq("plotId", id)).first();
+        if (document == null) return null;
+        Object plot = document.get("plot");
+        if (plot instanceof Map) return Plot.deserialize((Map<String, Object>) plot);
+        return null;
     }
 
     @Override
     public void deletePlot(Plot plot) {
-        bMongoDBManager.removeDocument("plotId", plot.getId(), DatabaseManager.getTableName());
+        collection.deleteOne(eq("plotId", plot.getId()));
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public List<Plot> getPlots() {
-        List<Document> documents = bMongoDBManager.getAllDocuments(DatabaseManager.getTableName());
-        return documents.stream().map(document -> Plot.deserialize((Map<String, Object>) document.get("plot"))).collect(Collectors.toList());
+        List<Document> documents = collection.find().into(new ArrayList<>());
+        return documents.stream()
+                .map(document -> document.get("plot"))
+                .filter(Map.class::isInstance)
+                .map(plot -> Plot.deserialize((Map<String, Object>) plot))
+                .collect(Collectors.toList());
+    }
+
+    private Document toDocument(Plot plot) {
+        Document document = new Document("plotId", plot.getId());
+        document.append("plot", Document.parse(gson.toJson(plot.serialize())));
+        return document;
+    }
+
+    private String buildConnectionUri(String host, int port, String username, String password, String database) {
+        if (username == null || username.trim().isEmpty() || "username".equalsIgnoreCase(username)) {
+            return "mongodb://" + host + ":" + port;
+        }
+        String encodedUser = URLEncoder.encode(username, StandardCharsets.UTF_8);
+        String encodedPassword = URLEncoder.encode(password == null ? "" : password, StandardCharsets.UTF_8);
+        return "mongodb://" + encodedUser + ":" + encodedPassword + "@" + host + ":" + port + "/" + database + "?authSource=" + database;
     }
 }

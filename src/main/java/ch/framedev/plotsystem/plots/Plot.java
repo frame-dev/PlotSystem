@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
+import java.util.logging.Level;
 
 /**
  * Class for Plot
@@ -25,6 +26,7 @@ import java.util.*;
  * / Copyrighted by FrameDev
  */
 
+@SuppressWarnings("unused")
 public class Plot implements Serializable, ConfigurationSerializable {
 
     private static final long serialVersionUID = 5964991476365408930L;
@@ -46,112 +48,147 @@ public class Plot implements Serializable, ConfigurationSerializable {
     private double price = 0;
 
     private PlotStatus status;
+    private GameMode gameMode;
 
     public Plot(int id, Location location1, Location location2) {
         this.id = id;
         location1.setY(1);
         location2.setY(250);
-        this.cuboid = new Cuboid(location1, location2);
-        this.flags = new ArrayList<>();
-        this.owners = new ArrayList<>();
-        this.bannedPlayers = new ArrayList<>();
-        this.members = new ArrayList<>();
-        this.home = locationToString(cuboid.getCenter());
-        this.status = PlotStatus.NOT_CLAIMED;
+        initialize(new Cuboid(location1, location2), null);
     }
 
     public Plot(Location location1, Location location2, int id, UUID owner) {
         this.id = id;
-        this.owner = owner;
-        this.owners = new ArrayList<>();
-        owners.add(owner);
-        this.flags = new ArrayList<>();
         location1.setY(1);
         location2.setY(250);
-        this.cuboid = new Cuboid(location1, location2);
-        this.bannedPlayers = new ArrayList<>();
-        this.members = new ArrayList<>();
-        this.home = locationToString(cuboid.getCenter());
-        this.status = PlotStatus.NOT_CLAIMED;
+        initialize(new Cuboid(location1, location2), owner);
     }
 
     public Plot(int id, Chunk chunk) {
         this.id = id;
         Location location1 = chunk.getBlock(0, 1, 0).getLocation();
         Location location2 = chunk.getBlock(15, 250, 15).getLocation();
-        this.cuboid = new Cuboid(location1, location2);
-        this.flags = new ArrayList<>();
-        this.owners = new ArrayList<>();
-        this.bannedPlayers = new ArrayList<>();
-        this.members = new ArrayList<>();
-        this.home = locationToString(cuboid.getCenter());
-        this.status = PlotStatus.NOT_CLAIMED;
+        initialize(new Cuboid(location1, location2), null);
     }
 
     public Plot(int id, Cuboid cuboid, UUID owner) {
         this.id = id;
-        this.owner = owner;
-        this.owners = new ArrayList<>();
-        owners.add(owner);
-        this.flags = new ArrayList<>();
+        initialize(cuboid, owner);
+    }
+
+    private void initialize(Cuboid cuboid, UUID owner) {
         this.cuboid = cuboid;
+        this.flags = new ArrayList<>();
+        this.owners = new ArrayList<>();
         this.bannedPlayers = new ArrayList<>();
         this.members = new ArrayList<>();
         this.home = locationToString(cuboid.getCenter());
         this.status = PlotStatus.NOT_CLAIMED;
+        this.gameMode = null;
+        setOwner(owner);
     }
 
     public Plot(Plot plot) {
         this(plot.id, plot.cuboid, plot.owner);
-        this.owners = plot.owners;
-        owners.add(owner);
-        this.flags = plot.flags;
-        this.bannedPlayers = plot.bannedPlayers;
-        this.members = plot.bannedPlayers;
+        this.owners = new ArrayList<>(plot.getOwners());
+        this.flags = new ArrayList<>(plot.getFlags());
+        this.bannedPlayers = new ArrayList<>(plot.getBannedPlayers());
+        this.members = new ArrayList<>(plot.getMembers());
         this.home = plot.home;
         this.price = plot.price;
         this.status = plot.status;
+        this.gameMode = plot.gameMode;
     }
 
     @SuppressWarnings("unchecked")
     public Plot(Map<String, Object> map) {
-        this.id = (int) map.get("id");
+        this.id = asInt(map.get("id"));
         if (map.get("owner") == null) {
             this.owner = null;
         } else
             this.owner = UUID.fromString((String) map.get("owner"));
-        List<String> ownerUUIDs = (List<String>) map.get("owners");
+        List<String> ownerUUIDs = getStringList(map, "owners");
         List<UUID> uuidsOwner = new ArrayList<>();
         for (String ow : ownerUUIDs) {
             uuidsOwner.add(UUID.fromString(ow));
         }
         this.owners = uuidsOwner;
-        List<String> memberUUIDs = (List<String>) map.get("members");
+        List<String> memberUUIDs = getStringList(map, "members");
         List<UUID> memberOwner = new ArrayList<>();
         for (String ow : memberUUIDs) {
             memberOwner.add(UUID.fromString(ow));
         }
         this.members = memberOwner;
-        this.cuboid = (Cuboid) map.get("cuboid");
-        List<String> bannedUUID = (List<String>) map.get("bannedplayers");
+        Object cuboidValue = map.get("cuboid");
+        if (cuboidValue instanceof Cuboid) {
+            this.cuboid = (Cuboid) cuboidValue;
+        } else if (cuboidValue instanceof Map) {
+            this.cuboid = Cuboid.deserialize((Map<String, Object>) cuboidValue);
+        } else {
+            throw new IllegalArgumentException("Invalid cuboid data for plot " + id);
+        }
+        List<String> bannedUUID = getStringList(map, "bannedplayers");
         List<UUID> bannedList = new ArrayList<>();
         for (String s : bannedUUID) {
             bannedList.add(UUID.fromString(s));
         }
         this.bannedPlayers = bannedList;
-        List<String> flagList = (List<String>) map.get("flags");
+        List<String> flagList = getStringList(map, "flags");
         List<Flag> flags = new ArrayList<>();
         for (String s : flagList) {
-            flags.add(Flag.getFlag(s));
+            Flag flag = Flag.getFlag(s);
+            if (flag != null) flags.add(flag);
         }
         this.flags = flags;
         this.home = (String) map.get("home");
-        this.price = (double) map.get("price");
-        this.status = PlotStatus.valueOf((String) map.get("status"));
+        this.price = map.containsKey("price") ? asDouble(map.get("price")) : 0;
+        this.status = parseStatus(map.get("status"));
+        this.gameMode = parseGameMode(map.get("gameMode"));
     }
 
     public static Plot deserialize(Map<String, Object> map) {
         return new Plot(map);
+    }
+
+    private static int asInt(Object value) {
+        if (value instanceof Number) {
+            return ((Number) value).intValue();
+        }
+        return Integer.parseInt(String.valueOf(value));
+    }
+
+    private static double asDouble(Object value) {
+        if (value instanceof Number) {
+            return ((Number) value).doubleValue();
+        }
+        return Double.parseDouble(String.valueOf(value));
+    }
+
+    private static PlotStatus parseStatus(Object value) {
+        if (value == null) return PlotStatus.NOT_CLAIMED;
+        try {
+            return PlotStatus.valueOf(String.valueOf(value));
+        } catch (IllegalArgumentException exception) {
+            return PlotStatus.NOT_CLAIMED;
+        }
+    }
+
+    private static @Nullable GameMode parseGameMode(Object value) {
+        if (value == null || String.valueOf(value).trim().isEmpty()) return null;
+        try {
+            return GameMode.valueOf(String.valueOf(value).toUpperCase());
+        } catch (IllegalArgumentException exception) {
+            return null;
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private static List<String> getStringList(Map<String, Object> map, String key) {
+        Object value = map.get(key);
+        if (value instanceof List) {
+            return (List<String>) value;
+        }
+        return new ArrayList<>();
     }
 
     /**
@@ -189,7 +226,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
     public void setOwner(UUID owner) {
         this.owner = owner;
         if (this.owners == null) this.owners = new ArrayList<>();
-        this.owners.add(owner);
+        if (owner != null && !this.owners.contains(owner)) this.owners.add(owner);
     }
 
     public void setCuboid(Cuboid cuboid) {
@@ -206,21 +243,25 @@ public class Plot implements Serializable, ConfigurationSerializable {
     }
 
     public void addOwner(UUID owner) {
+        if (owner == null) return;
+        if (this.owners == null) this.owners = new ArrayList<>();
         if (this.owner == null) this.owner = owner;
         if (!owners.contains(owner)) owners.add(owner);
     }
 
     public void removeOwner(UUID owner) {
-        if (this.owners.size() == 1) this.owner = null;
+        if (this.owners == null) this.owners = new ArrayList<>();
         this.owners.remove(owner);
+        this.owner = this.owners.isEmpty() ? null : this.owners.get(0);
     }
 
     public void setOwners(List<UUID> owners) {
-        if (!owners.isEmpty()) this.owner = owners.get(0);
-        this.owners = owners;
+        this.owners = owners == null ? new ArrayList<>() : new ArrayList<>(owners);
+        this.owner = this.owners.isEmpty() ? null : this.owners.get(0);
     }
 
     public List<UUID> getOwners() {
+        if (owners == null) owners = new ArrayList<>();
         return owners;
     }
 
@@ -249,10 +290,11 @@ public class Plot implements Serializable, ConfigurationSerializable {
     }
 
     public void setFlags(List<Flag> flags) {
-        this.flags = flags;
+        this.flags = flags == null ? new ArrayList<>() : flags;
     }
 
     public List<Flag> getFlags() {
+        if (flags == null) flags = new ArrayList<>();
         return flags;
     }
 
@@ -285,14 +327,15 @@ public class Plot implements Serializable, ConfigurationSerializable {
     }
 
     public boolean hasOwner() {
-        return owner != null || !owners.isEmpty();
+        return owner != null || !getOwners().isEmpty();
     }
 
     public void setBannedPlayers(List<UUID> bannedPlayers) {
-        this.bannedPlayers = bannedPlayers;
+        this.bannedPlayers = bannedPlayers == null ? new ArrayList<>() : bannedPlayers;
     }
 
     public List<UUID> getBannedPlayers() {
+        if (bannedPlayers == null) bannedPlayers = new ArrayList<>();
         return bannedPlayers;
     }
 
@@ -314,10 +357,11 @@ public class Plot implements Serializable, ConfigurationSerializable {
     }
 
     public void setMembers(List<UUID> members) {
-        this.members = members;
+        this.members = members == null ? new ArrayList<>() : members;
     }
 
     public List<UUID> getMembers() {
+        if (members == null) members = new ArrayList<>();
         return members;
     }
 
@@ -331,11 +375,23 @@ public class Plot implements Serializable, ConfigurationSerializable {
 
     public void setPrice(double price) {
         this.price = price;
-        this.addFlag(Flag.SELL);
+        if (price > 0) {
+            this.addFlag(Flag.SELL);
+        } else {
+            this.removeFlag(Flag.SELL);
+        }
     }
 
     public double getPrice() {
         return price;
+    }
+
+    public @Nullable GameMode getGameMode() {
+        return gameMode;
+    }
+
+    public void setGameMode(@Nullable GameMode gameMode) {
+        this.gameMode = gameMode;
     }
 
     public void setHome(Location location) {
@@ -378,6 +434,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
 
     private static @NotNull Location getLocation(String text) {
         String[] s = text.split(";");
+        if (s.length < 6) throw new IllegalArgumentException("Invalid location string: " + text);
         World world = Bukkit.getWorld(s[0]);
         int x = Integer.parseInt(s[1]);
         int y = Integer.parseInt(s[2]);
@@ -421,11 +478,14 @@ public class Plot implements Serializable, ConfigurationSerializable {
      * @return return Plot Home Location
      */
     public @Nullable Location getHome() {
-        if (home == null) {
-            if (cuboid.getCenter().getWorld() == null) return null;
-            return null;
-        } else {
+        if (home == null || home.trim().isEmpty()) {
+            return cuboid == null ? null : cuboid.getCenter();
+        }
+        try {
             return locationFromString(home);
+        } catch (RuntimeException ex) {
+            Main.getInstance().getLogger().log(Level.WARNING, "Invalid home for plot " + id, ex);
+            return cuboid == null ? null : cuboid.getCenter();
         }
     }
 
@@ -523,6 +583,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
                 ", bannedPlayers=" + bannedPlayers +
                 ", members=" + members +
                 ", home=" + home +
+                ", gameMode=" + gameMode +
                 '}';
     }
 
@@ -552,7 +613,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
                 try {
                     cfg.save(fileCfg);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Main.getInstance().getLogger().log(Level.SEVERE, "Error", e);
                 }
             } else {
                 //noinspection unchecked
@@ -564,25 +625,27 @@ public class Plot implements Serializable, ConfigurationSerializable {
                 try {
                     cfg.save(fileCfg);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Main.getInstance().getLogger().log(Level.SEVERE, "Error", e);
                 }
             }
         }
     }
 
     public static Plot getPlot(int id) {
-        if (getPlots() == null) return null;
-        for (Plot plot : getPlots()) {
+        List<Plot> plots = getPlots();
+        if (plots == null) return null;
+        for (Plot plot : plots) {
             if (plot.getId() == id) return plot;
         }
-        System.out.println("null");
         return null;
     }
 
     public static Plot getPlot(UUID owner) {
-        if (getPlots() == null) return null;
-        for (Plot plot : getPlots())
-            if (plot.getOwner() == owner || plot.getOwners() != null && plot.getOwners().contains(owner)) return plot;
+        if (owner == null) return null;
+        List<Plot> plots = getPlots();
+        if (plots == null) return null;
+        for (Plot plot : plots)
+            if (owner.equals(plot.getOwner()) || plot.getOwners().contains(owner)) return plot;
         return null;
     }
 
@@ -605,29 +668,29 @@ public class Plot implements Serializable, ConfigurationSerializable {
     }
 
     public static boolean isPlayerInPlotStatic(Player player) {
-        if (getPlots() == null) {
+        List<Plot> plots = getPlots();
+        if (plots == null) {
             return false;
         }
-        List<Boolean> booleans = new ArrayList<>();
-        for (Plot plot : getPlots()) {
-            booleans.add(plot.isPlayerInPlot(player));
+        for (Plot plot : plots) {
+            if (plot.isPlayerInPlot(player)) return true;
         }
-        return booleans.contains(true);
+        return false;
     }
 
     public static boolean isLocationInPlot(Location location) {
-        List<Boolean> booleans = new ArrayList<>();
-        if (getPlots() != null) {
-            for (Plot plot : getPlots()) {
-                booleans.add(plot.inPlot(location));
-            }
+        List<Plot> plots = getPlots();
+        if (plots == null) return false;
+        for (Plot plot : plots) {
+            if (plot.inPlot(location)) return true;
         }
-        return booleans.contains(true);
+        return false;
     }
 
     public static Plot getPlot(Location location) {
-        if (getPlots() == null) return null;
-        for (Plot plot : getPlots()) {
+        List<Plot> plots = getPlots();
+        if (plots == null) return null;
+        for (Plot plot : plots) {
             if (plot.getCuboid().contains(location)) return plot;
         }
         return null;
@@ -641,8 +704,9 @@ public class Plot implements Serializable, ConfigurationSerializable {
      */
     public static List<Plot> getPlayerPlots(OfflinePlayer player) {
         List<Plot> plots = new ArrayList<>();
-        if (getPlots() == null) return plots;
-        for (Plot plot : getPlots()) {
+        List<Plot> allPlots = getPlots();
+        if (allPlots == null) return plots;
+        for (Plot plot : allPlots) {
             if (plot.isOwner(player) || plot.isMember(player))
                 plots.add(plot);
         }
@@ -655,9 +719,10 @@ public class Plot implements Serializable, ConfigurationSerializable {
      * @return return the highest id of Plots
      */
     public static int getHighestId() {
-        if (getPlots() == null) return 0;
+        List<Plot> plots = getPlots();
+        if (plots == null) return 0;
         int highest = 0;
-        for (Plot plot : getPlots()) {
+        for (Plot plot : plots) {
             if (plot.id > highest) highest = plot.id;
         }
         return highest;
@@ -669,17 +734,23 @@ public class Plot implements Serializable, ConfigurationSerializable {
         if (o instanceof Plot) {
             Plot p = (Plot) o;
             if (this.id != p.id) return false;
-            if (this.owner != p.owner) return false;
-            if (this.owners != p.owners) return false;
-            if (this.cuboid != p.cuboid) return false;
-            if (this.members != p.members) return false;
+            if (!Objects.equals(this.owner, p.owner)) return false;
+            if (!Objects.equals(this.owners, p.owners)) return false;
+            if (!Objects.equals(this.cuboid, p.cuboid)) return false;
+            if (!Objects.equals(this.members, p.members)) return false;
             if (!Objects.equals(this.home, p.home)) return false;
-            if (this.bannedPlayers != p.bannedPlayers) return false;
+            if (!Objects.equals(this.bannedPlayers, p.bannedPlayers)) return false;
             if (this.price != p.price) return false;
-            return this.flags == p.flags;
+            if (this.gameMode != p.gameMode) return false;
+            return Objects.equals(this.flags, p.flags);
         } else {
             return false;
         }
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, owner, owners, cuboid, flags, bannedPlayers, members, home, price, gameMode);
     }
 
     @NotNull
@@ -702,7 +773,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
             memberUUID.add(uuid.toString());
         }
         map.put("members", memberUUID);
-        map.put("cuboid", cuboid);
+        map.put("cuboid", cuboid.serialize());
         List<String> bannedPlayersUUID = new ArrayList<>();
         for (UUID uuid : bannedPlayers) {
             bannedPlayersUUID.add(uuid.toString());
@@ -716,6 +787,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
         map.put("home", home);
         map.put("price", price);
         map.put("status", status.name());
+        map.put("gameMode", gameMode == null ? null : gameMode.name());
         return map;
     }
 
@@ -724,6 +796,7 @@ public class Plot implements Serializable, ConfigurationSerializable {
      *
      * @return return the Cloned Plot
      */
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override
     public Plot clone() {
         return new Plot(this);

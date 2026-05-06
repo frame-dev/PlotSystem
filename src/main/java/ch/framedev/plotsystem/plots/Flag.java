@@ -76,7 +76,87 @@ public enum Flag {
     /**
      * Flag for enabling or disabling monster spawners in the Plot
      */
-    MONSTER_SPAWNER("MONSTER_SPAWNER", "Enable Monster Spawner");
+    MONSTER_SPAWNER("MONSTER_SPAWNER", "Enable Monster Spawner"),
+
+    /**
+     * Flag for allowing fire to ignite, burn, and spread in the Plot
+     */
+    FIRE_SPREAD("FIRE_SPREAD", "Allow fire spread and burning in Plot"),
+
+    /**
+     * Flag for allowing water and lava to flow in the Plot
+     */
+    LIQUID_FLOW("LIQUID_FLOW", "Allow water and lava flow in Plot"),
+
+    /**
+     * Flag for allowing visitors to drop items in the Plot
+     */
+    ITEM_DROP("ITEM_DROP", "Allow visitors to drop items in Plot"),
+
+    /**
+     * Flag for allowing visitors to pick up items in the Plot
+     */
+    ITEM_PICKUP("ITEM_PICKUP", "Allow visitors to pick up items in Plot"),
+
+    /**
+     * Flag for allowing hunger loss in the Plot
+     */
+    HUNGER("HUNGER", "Allow hunger loss in Plot"),
+
+    /**
+     * Flag for allowing visitors to teleport with ender pearls in the Plot
+     */
+    ENDER_PEARL("ENDER_PEARL", "Allow ender pearl teleporting in Plot"),
+
+    /**
+     * Flag for blocking visitor commands while they are inside the Plot
+     */
+    DENY_COMMANDS("DENY_COMMANDS", "Deny visitor commands in Plot"),
+
+    /**
+     * Flag for allowing visitors to use doors, trapdoors, and fence gates in the Plot
+     */
+    DOORS("DOORS", "Allow visitors to use doors in Plot"),
+
+    /**
+     * Flag for allowing visitors to use buttons, levers, and pressure plates in the Plot
+     */
+    SWITCHES("SWITCHES", "Allow visitors to use switches in Plot"),
+
+    /**
+     * Flag for allowing visitors to use vehicles in the Plot
+     */
+    VEHICLES("VEHICLES", "Allow visitors to use vehicles in Plot"),
+
+    /**
+     * Flag for allowing visitors to interact with armor stands in the Plot
+     */
+    ARMOR_STANDS("ARMOR_STANDS", "Allow visitors to use armor stands in Plot"),
+
+    /**
+     * Flag for allowing visitors to interact with item frames in the Plot
+     */
+    ITEM_FRAMES("ITEM_FRAMES", "Allow visitors to use item frames in Plot"),
+
+    /**
+     * Flag for allowing splash and lingering potion effects in the Plot
+     */
+    POTIONS("POTIONS", "Allow potion effects in Plot"),
+
+    /**
+     * Flag for allowing visitors to launch projectiles in the Plot
+     */
+    PROJECTILES("PROJECTILES", "Allow visitors to launch projectiles in Plot"),
+
+    /**
+     * Flag for allowing visitors to fly in the Plot
+     */
+    FLY("FLY", "Allow visitor flight in Plot"),
+
+    /**
+     * Flag for allowing farmland trampling in the Plot
+     */
+    CROP_TRAMPLE("CROP_TRAMPLE", "Allow farmland trampling in Plot");
 
     private final String type;
     private final String description;

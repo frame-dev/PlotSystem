@@ -12,24 +12,20 @@ package ch.framedev.plotsystem.utils;
  */
 
 import ch.framedev.plotsystem.main.Main;
-import ch.framedev.plotsystem.plots.Plot;
-import ch.framedev.spigotsqliteutils.SQLite;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.Gson;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.io.File;
-import java.lang.reflect.Type;
-import java.sql.ResultSet;
+import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
-public class SQLiteManager implements IDatabase {
+public class SQLiteManager extends JdbcPlotDatabase {
 
     public SQLiteManager() {
+        super(connect(), "SQLite", "CREATE TABLE IF NOT EXISTS " + DatabaseManager.getTableName() + " (plotId INTEGER PRIMARY KEY, plot TEXT NOT NULL)");
+    }
+
+    private static Connection connect() {
         // Ensure configuration exists
         ConfigurationSection dbConfig = Main.getInstance().getConfig().getConfigurationSection("database.sqlite");
         if (dbConfig == null) {
@@ -37,104 +33,23 @@ public class SQLiteManager implements IDatabase {
         }
 
         // Fetch values safely
-        String path = dbConfig.getString("path", "path"); // Default to 'database.db' in the plugin folder
+        String path = dbConfig.getString("path", Main.getInstance().getDataFolder().getPath());
         String database = dbConfig.getString("database", "database.db");
 
         // Ensure directory exists
         File dbFile = new File(path);
-        if (!dbFile.getParentFile().exists()) {
-            if (!dbFile.getParentFile().mkdirs()) {
+        if (!dbFile.exists()) {
+            if (!dbFile.mkdirs()) {
                 throw new IllegalStateException("Failed to create directory for SQLite database!");
             }
         }
 
         // Initialize SQLite connection
-        //noinspection InstantiationOfUtilityClass
-        new SQLite(dbFile.getAbsolutePath(), database);
-    }
-
-    @Override
-    public void createTable() {
-        if (!SQLite.isTableExists(DatabaseManager.getTableName())) return;
-        String[] columns = {
-                "plotId TEXT(255)",
-                "plot JSON"
-        };
-        SQLite.createTable(DatabaseManager.getTableName(), true, columns);
-    }
-
-    @Override
-    public void insertPlot(Plot plot) {
-        String json = new Gson().toJson(plot.serialize());
-        String[] columns = {
-                "plotId",
-                "plot"
-        };
-        Object[] values = {
-                plot.getId(),
-                json
-        };
-        SQLite.insertData(DatabaseManager.getTableName(), values, columns);
-    }
-
-    @Override
-    public boolean existsPlot(int plotId) {
-        return SQLite.exists(DatabaseManager.getTableName(), "plotId", String.valueOf(plotId));
-    }
-
-    @Override
-    public void updatePlot(Plot plot) {
-        if(!existsPlot(plot.getId())) return;
-        String json = new Gson().toJson(plot.serialize());
-        String[] columns = {
-                "plotId",
-                "plot"
-        };
-        Object[] values = {
-                plot.getId(),
-                json
-        };
-        SQLite.updateData(DatabaseManager.getTableName(), columns, values, "plotId ='" + plot.getId() + "'");
-    }
-
-    @Override
-    public Plot getPlotById(int id) {
-        if (!existsPlot(id)) return null;
-        String[] columns = {
-                "plotId",
-                "plot"
-        };
-        List<Object> values = SQLite.get(DatabaseManager.getTableName(), columns, "plotId", id);
-        if (values.isEmpty()) return null;
-        Type type = new TypeToken<Map<String, Object>>(){}.getType();
-        Map<String, Object> map = new Gson().fromJson(String.valueOf(values.get(1)), type);
-        return new Plot(map);
-    }
-
-    @Override
-    public void deletePlot(Plot plot) {
-        if(!existsPlot(plot.getId())) return;
-        SQLite.deleteDataInTable(DatabaseManager.getTableName(), "plotId='" + plot.getId() + "'");
-    }
-
-    @SuppressWarnings("resource")
-    @Override
-    public List<Plot> getPlots() {
-        List<Plot> plots = new ArrayList<>();
-        try (Statement statement = SQLite.connect().createStatement()) {
-            try (ResultSet resultSet = statement.executeQuery("SELECT * FROM " + DatabaseManager.getTableName() + ";")) {
-                while (resultSet.next()) {
-                    String json = resultSet.getString("plot");
-                    Type type = new TypeToken<Map<String, Object>>() {
-                    }.getType();
-                    Map<String, Object> map = new Gson().fromJson(json, type);
-                    Plot plot = new Plot(map);
-                    plots.add(plot);
-                }
-            }
+        File databaseFile = new File(dbFile, database);
+        try {
+            return DriverManager.getConnection("jdbc:sqlite:" + databaseFile.getAbsolutePath());
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("Failed to connect to SQLite database!", e);
         }
-        return plots;
     }
 }

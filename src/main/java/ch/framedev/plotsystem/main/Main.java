@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 
+@SuppressWarnings("unused")
 public final class Main extends JavaPlugin {
 
     private static Main instance;
@@ -44,11 +46,14 @@ public final class Main extends JavaPlugin {
 
     // This Boolean is for Limited to set if the Player can Only claim Limited Plots
     private boolean limitedClaim;
+    private int maxClaimedPlots;
     private long limitedAmount;
     private HashMap<Player, Long> limitedHashMap;
     private long updateTime;
 
     private PlotListeners plotListeners;
+
+    private BukkitTask task;
 
     @Override
     public void onLoad() {
@@ -67,6 +72,7 @@ public final class Main extends JavaPlugin {
 
         // Limited Plots Init
         this.limitedClaim = getConfig().getBoolean("MaxBlockClaim.Limited");
+        this.maxClaimedPlots = Math.max(1, getConfig().getInt("MaxBlockClaim.MaxPlots", 1));
         this.limitedAmount = getConfig().getLong("MaxBlockClaim.Amount");
         this.limitedHashMap = new HashMap<>();
         if(limitedClaim) {
@@ -101,7 +107,7 @@ public final class Main extends JavaPlugin {
         if (getConfig().contains("DefaultFlags"))
             this.defaultFlags = getConfig().getStringList("DefaultFlags");
 
-        new BukkitRunnable() {
+        task = new BukkitRunnable() {
             @Override
             public void run() {
                 if (getServer().getPluginManager().getPlugin("Vault") != null) {
@@ -125,13 +131,14 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if(!this.plotListeners.getTask().isCancelled()) {
+        if(this.plotListeners != null && this.plotListeners.getTask() != null && !this.plotListeners.getTask().isCancelled()) {
             this.plotListeners.getTask().cancel();
         }
-        this.plots.clear();
-        this.defaultFlags.clear();
-        this.limitedHashMap.clear();
+        if (this.plots != null) this.plots.clear();
+        if (this.defaultFlags != null) this.defaultFlags.clear();
+        if (this.limitedHashMap != null) this.limitedHashMap.clear();
         this.limitedClaim = false;
+        this.maxClaimedPlots = 0;
         this.limitedAmount = 0;
         this.updateTime = 0;
         this.vaultManager = null;
@@ -139,6 +146,10 @@ public final class Main extends JavaPlugin {
         this.mysql = false;
         this.sql = false;
         instance = null;
+        if (task != null && !task.isCancelled()) {
+            task.cancel();
+        }
+        task = null;
         Bukkit.getConsoleSender().sendMessage(getPrefix() + "§cPlotSystem Disabled!! Bye...");
     }
 
@@ -216,6 +227,10 @@ public final class Main extends JavaPlugin {
         return limitedAmount;
     }
 
+    public int getMaxClaimedPlots() {
+        return maxClaimedPlots;
+    }
+
     public HashMap<Player, Long> getLimitedHashMap() {
         return limitedHashMap;
     }
@@ -227,13 +242,10 @@ public final class Main extends JavaPlugin {
     // Write Permissions File permissions.txt
     public void writePermissionsFile() {
         File file = new File(getDataFolder(), "permissions.txt");
-        try {
-            BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file))) {
             for (Permission permissions : getDescription().getPermissions()) {
                 bufferedWriter.append(permissions.getName()).append("\n");
             }
-            bufferedWriter.flush();
-            bufferedWriter.close();
         } catch (Exception ex) {
             this.getLogger().log(Level.SEVERE, "Error while writing permissions.txt", ex);
         }
@@ -243,13 +255,15 @@ public final class Main extends JavaPlugin {
         File file = new File(getDataFolder(), "config.yml");
         FileConfiguration cfg = YamlConfiguration.loadConfiguration(file);
         //Defaults in jar
-        Reader defConfigStream = null;
+        Reader defConfigStream;
         defConfigStream = new InputStreamReader(Objects.requireNonNull(getResource("config.yml")), StandardCharsets.UTF_8);
-        if (defConfigStream != null) {
-            YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
-            cfg.setDefaults(defConfig);
-            cfg.options().copyDefaults(true);
-            Main.getInstance().saveDefaultConfig();
+        YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(defConfigStream);
+        cfg.setDefaults(defConfig);
+        cfg.options().copyDefaults(true);
+        try {
+            cfg.save(file);
+        } catch (IOException ex) {
+            this.getLogger().log(Level.SEVERE, "Error while saving config.yml defaults", ex);
         }
     }
 }

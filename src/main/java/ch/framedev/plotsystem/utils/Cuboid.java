@@ -13,11 +13,12 @@ import java.util.*;
  *
  * @author desht (Original code), KingFaris10 (Editor of code)
  */
+@SuppressWarnings("unused")
 public class Cuboid implements Serializable, Iterable<Block>, Cloneable, ConfigurationSerializable {
 
     private static final long serialVersionUID = -3106898751856361238L;
 
-    protected final String worldName;
+    protected String worldName;
     protected final int x1, y1, z1;
     protected final int x2, y2, z2;
 
@@ -31,7 +32,9 @@ public class Cuboid implements Serializable, Iterable<Block>, Cloneable, Configu
     public Cuboid(Location l1, Location l2) {
         if (!Objects.equals(l1.getWorld(), l2.getWorld()))
             throw new IllegalArgumentException("Locations must be on the same world");
-        this.worldName = l1.getWorld().getName();
+        if (l1.getWorld() != null) {
+            this.worldName = l1.getWorld().getName();
+        }
         this.x1 = Math.min(l1.getBlockX(), l2.getBlockX());
         this.y1 = Math.min(l1.getBlockY(), l2.getBlockY());
         this.z1 = Math.min(l1.getBlockZ(), l2.getBlockZ());
@@ -107,12 +110,19 @@ public class Cuboid implements Serializable, Iterable<Block>, Cloneable, Configu
      */
     public Cuboid(Map<String, Object> map) {
         this.worldName = (String) map.get("worldName");
-        this.x1 = (Integer) map.get("x1");
-        this.x2 = (Integer) map.get("x2");
-        this.y1 = (Integer) map.get("y1");
-        this.y2 = (Integer) map.get("y2");
-        this.z1 = (Integer) map.get("z1");
-        this.z2 = (Integer) map.get("z2");
+        this.x1 = asInt(map.get("x1"));
+        this.x2 = asInt(map.get("x2"));
+        this.y1 = asInt(map.get("y1"));
+        this.y2 = asInt(map.get("y2"));
+        this.z1 = asInt(map.get("z1"));
+        this.z2 = asInt(map.get("z2"));
+    }
+
+    private static int asInt(Object value) {
+        if (value instanceof Number) {
+            return ((Number) value).intValue();
+        }
+        return Integer.parseInt(String.valueOf(value));
     }
 
     @Override
@@ -157,7 +167,7 @@ public class Cuboid implements Serializable, Iterable<Block>, Cloneable, Configu
      */
     public ArrayList<Block> getBlocks() {
         Iterator<Block> blockI = this.iterator();
-        ArrayList<Block> copy = new ArrayList<Block>();
+        ArrayList<Block> copy = new ArrayList<>();
         while (blockI.hasNext())
             copy.add(blockI.next());
         return copy;
@@ -390,7 +400,7 @@ public class Cuboid implements Serializable, Iterable<Block>, Cloneable, Configu
      * @return true if the Location is within this Cuboid, false otherwise
      */
     public boolean contains(Location l) {
-        if (!this.worldName.equals(l.getWorld().getName())) return false;
+        if (!this.worldName.equals(Objects.requireNonNull(l.getWorld()).getName())) return false;
         return this.contains(l.getBlockX(), l.getBlockY(), l.getBlockZ());
     }
 
@@ -581,7 +591,9 @@ public class Cuboid implements Serializable, Iterable<Block>, Cloneable, Configu
 
     public void lightUpCorners() {
         for (Block corner : corners()) {
-            corner.getWorld().getHighestBlockAt(corner.getLocation()).getLocation().add(0, 1, 0).getBlock().setType(Material.GLOWSTONE);
+            if (corner.getWorld() != null) {
+                corner.getWorld().getHighestBlockAt(corner.getLocation()).getLocation().add(0, 1, 0).getBlock().setType(Material.GLOWSTONE);
+            }
         }
     }
 
@@ -589,6 +601,7 @@ public class Cuboid implements Serializable, Iterable<Block>, Cloneable, Configu
         return new CuboidIterator(this.getWorld(), this.x1, this.y1, this.z1, this.x2, this.y2, this.z2);
     }
 
+    @SuppressWarnings("MethodDoesntCallSuperMethod")
     @Override
     public Cuboid clone() {
         return new Cuboid(this);

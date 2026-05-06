@@ -7,9 +7,6 @@ authors: [ FrameDev ]
 website: https://framedev.ch
 softdepend:
   - Vault
-  - SpigotMySQLUtils
-  - SpigotSQLiteUtils
-  - SpigotMongoDBUtils
 
 commands:
   create:
@@ -33,10 +30,34 @@ permissions:
       plotsystem.admin.pvp: true
       plotsystem.admin.interact: true
       plotsystem.admin.ignore: true
+      plotsystem.admin.ignorechat: true
+      plotsystem.admin.ignorecommands: true
+      plotsystem.admin.itemdrop: true
+      plotsystem.admin.itempickup: true
+      plotsystem.admin.hunger: true
+      plotsystem.admin.enderpearl: true
+      plotsystem.admin.doors: true
+      plotsystem.admin.switches: true
+      plotsystem.admin.vehicles: true
+      plotsystem.admin.armorstands: true
+      plotsystem.admin.itemframes: true
+      plotsystem.admin.projectiles: true
+      plotsystem.admin.fly: true
+      plotsystem.admin.gamemode: true
       plotsystem.admin.create: true
       plotsystem.admin.createplot: true
+      plotsystem.admin.delete: true
+      plotsystem.flags.info: true
       plotsystem.plot.marker: true
       plotsystem.plot.claim: true
+      plotsystem.plot.unclaim: true
+      plotsystem.plot.buy: true
+      plotsystem.plot.home: true
+      plotsystem.plot.sethome: true
+      plotsystem.plot.setprice: true
+      plotsystem.plot.list: true
+      plotsystem.plot.list.others: true
+      plotsystem.plot.stats: true
       plotsystem.plot.visit: true
       plotsystem.plot.ban: true
       plotsystem.plot.flag: true
@@ -56,13 +77,61 @@ permissions:
     default: op
   plotsystem.admin.ignore:
     default: op
+  plotsystem.admin.ignorechat:
+    default: op
+  plotsystem.admin.ignorecommands:
+    default: op
+  plotsystem.admin.itemdrop:
+    default: op
+  plotsystem.admin.itempickup:
+    default: op
+  plotsystem.admin.hunger:
+    default: op
+  plotsystem.admin.enderpearl:
+    default: op
+  plotsystem.admin.doors:
+    default: op
+  plotsystem.admin.switches:
+    default: op
+  plotsystem.admin.vehicles:
+    default: op
+  plotsystem.admin.armorstands:
+    default: op
+  plotsystem.admin.itemframes:
+    default: op
+  plotsystem.admin.projectiles:
+    default: op
+  plotsystem.admin.fly:
+    default: op
+  plotsystem.admin.gamemode:
+    default: op
   plotsystem.admin.create:
     default: op
   plotsystem.admin.createplot:
     default: op
+  plotsystem.admin.delete:
+    default: op
+  plotsystem.flags.info:
+    default: op
   plotsystem.plot.marker:
     default: op
   plotsystem.plot.claim:
+    default: op
+  plotsystem.plot.unclaim:
+    default: op
+  plotsystem.plot.buy:
+    default: op
+  plotsystem.plot.home:
+    default: op
+  plotsystem.plot.sethome:
+    default: op
+  plotsystem.plot.setprice:
+    default: op
+  plotsystem.plot.list:
+    default: op
+  plotsystem.plot.list.others:
+    default: op
+  plotsystem.plot.stats:
     default: op
   plotsystem.plot.visit:
     default: op
@@ -70,7 +139,7 @@ permissions:
     default: op
   plotsystem.plot.flag:
     default: op
-  plotsystem.removeowner:
+  plotsystem.plot.removeowner:
     default: op
   plotsystem.plot.setowner:
     default: op
